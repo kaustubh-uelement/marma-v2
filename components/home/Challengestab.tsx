@@ -314,7 +314,7 @@ function DesktopContent({ data }: { data: TabData }) {
             src={data.image}
             alt={data.title}
             fill
-            className="object-fill object-center rounded-[28px]"
+            className="object-cover object-center rounded-[28px]"
             sizes="(max-width: 1440px) 50vw, 720px"
           />
         </GlassWrapper>
