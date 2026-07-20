@@ -1,4 +1,4 @@
-import { blogs } from '@/lib/blogData';
+import { getBlogs } from '@/lib/blogData';
 import BlogCard from '@/components/blogs/BlogCard';
 
 export const metadata = {
@@ -6,7 +6,9 @@ export const metadata = {
   description: 'Read the latest insights and updates from the Marma Security team.',
 };
 
-export default function BlogsPage() {
+export default async function BlogsPage() {
+  const blogs = await getBlogs();
+
   return (
     <main className="bg-bg-light min-h-screen pt-[120px] pb-20">
       <div className="container mx-auto px-4 md:px-8 max-w-[1280px]">

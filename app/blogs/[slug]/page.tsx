@@ -1,4 +1,4 @@
-import { blogs } from "@/lib/blogData";
+import { getBlogBySlug } from "@/lib/blogData";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -10,7 +10,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const resolvedParams = await params;
-  const blog = blogs.find((b) => b.slug === resolvedParams.slug);
+  const blog = await getBlogBySlug(resolvedParams.slug);
 
   if (!blog) return { title: "Blog Not Found" };
 
@@ -39,7 +39,7 @@ export default async function SingleBlogPage({
   params: Promise<{ slug: string }>;
 }) {
   const resolvedParams = await params;
-  const blog = blogs.find((b) => b.slug === resolvedParams.slug);
+  const blog = await getBlogBySlug(resolvedParams.slug);
 
   if (!blog) {
     notFound();
