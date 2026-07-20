@@ -44,6 +44,7 @@ export const PARTNERS: Record<RegionKey, Partner[]> = {
     { name: "Forenx Technologies", website: "https://www.forenxtech.com/", logo: "/images/partners/logos/forenx.png", region: "India" },
     { name: "Atomic IT Solutions", website: "https://atomicits.com/", logo: "/images/partners/logos/atomicits.png", region: "India" },
     { name: "Axiatix", website: "https://axiatix.com/", logo: "/images/partners/logos/axiatix.png", region: "India" },
+    { name: "ARRA Associates", website: "https://arra-associates.com/", logo: "/images/partners/logos/arra-logo.png", region: "India" },
   ],
   Caribbean: [
     { name: "Alt Catalyst", website: "https://altcatalyst.com/", logo: "/images/partners/logos/altcatalyst.png", region: "Caribbean" },
