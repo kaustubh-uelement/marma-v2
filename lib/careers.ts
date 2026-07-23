@@ -306,7 +306,7 @@ export async function submitApplication(
       "Primary application submission failed, falling back:",
       error,
     );
-    // return submitApplicationFallback(formData);
+    return submitApplicationFallback(formData);
   }
 }
 
