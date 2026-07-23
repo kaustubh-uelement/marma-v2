@@ -23,7 +23,7 @@ export const REGIONS: RegionInfo[] = [
 
 
 
-export const PARTNERS: Record<RegionKey, Partner[]> = {
+export const FALLBACK_PARTNERS: Record<RegionKey, Partner[]> = {
   USA: [
     { name: "ByteSols", website: "https://bytesols.com/", logo: "/images/partners/logos/bytesols.png", region: "USA" },
     { name: "MacroTech", website: "https://macrotechglobal.com/", logo: "/images/partners/logos/macrotech.svg", region: "USA" },
@@ -73,4 +73,67 @@ export function getInitials(name: string): string {
     .map((w) => w[0])
     .join("")
     .toUpperCase();
+}
+
+export async function getPartners(): Promise<Record<RegionKey, Partner[]>> {
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    const tenantSlug = process.env.NEXT_PUBLIC_TENANT_SLUG;
+
+    if (!tenantSlug) {
+      console.warn("Missing NEXT_PUBLIC_TENANT_SLUG in env");
+      return FALLBACK_PARTNERS;
+    }
+
+    const res = await fetch(`${apiUrl}/api/v1/partnerships/active`, {
+      headers: {
+        'x-tenant-slug': tenantSlug,
+      },
+      next: { revalidate: 60 }
+    });
+
+    if (!res.ok) {
+      console.error("Failed to fetch partners:", res.statusText);
+      return FALLBACK_PARTNERS;
+    }
+
+    const json = await res.json();
+    const data = Array.isArray(json) ? json : json.data || [];
+
+    if (data.length === 0) {
+      return FALLBACK_PARTNERS;
+    }
+
+    const grouped: Record<RegionKey, Partner[]> = {
+      USA: [],
+      India: [],
+      Caribbean: [],
+      Thailand: [],
+    };
+
+    data.forEach((item: any) => {
+      const extra = item.extra_field || {};
+      // Fallback to USA if region is invalid
+      const region = (extra.region as RegionKey) || "USA";
+
+      const partner: Partner = {
+        name: extra.name || "Partner",
+        website: item.website_url || "",
+        logo: item.logo || "",
+        region: region,
+        theme: extra.theme || "light",
+      };
+
+      if (grouped[region]) {
+        grouped[region].push(partner);
+      } else {
+        grouped.USA.push(partner);
+      }
+    });
+
+    return grouped;
+  } catch (error) {
+    console.error("Error fetching partners:", error);
+    return FALLBACK_PARTNERS;
+  }
 }

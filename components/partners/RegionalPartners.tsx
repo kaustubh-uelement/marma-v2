@@ -1,47 +1,15 @@
-"use client";
-
-import React, { useState } from "react";
-import Image from "next/image";
+import React from "react";
 import { Globe } from "lucide-react";
 import {
-  PARTNERS,
-  getAvatarColor,
-  getInitials,
+  getPartners,
   type RegionKey,
   type Partner,
 } from "@/lib/partnerData";
+import { PartnerLogo } from "./PartnerLogo";
 
-function PartnerLogo({ partner, index }: { partner: Partner; index: number }) {
-  const [imgError, setImgError] = useState(false);
+export default async function RegionalPartners() {
+  const partnersData = await getPartners();
 
-  if (imgError) {
-    return (
-      <div
-        className="w-full h-full rounded-xl flex items-center justify-center"
-        style={{ backgroundColor: getAvatarColor(index) }}
-      >
-        <span className="text-white font-bold text-xl select-none">
-          {getInitials(partner.name)}
-        </span>
-      </div>
-    );
-  }
-
-  return (
-    <div className="relative w-full h-full flex items-center justify-center">
-      <Image
-        src={partner.logo}
-        alt={`${partner.name} logo`}
-        fill
-        className="object-contain"
-        onError={() => setImgError(true)}
-        unoptimized
-      />
-    </div>
-  );
-}
-
-export default function RegionalPartners() {
   return (
     <section className="w-full bg-white flex flex-col items-center pt-16 lg:pt-24 pb-16 lg:pb-24 font-body overflow-hidden">
       <div className="w-full max-w-[1440px] px-6 lg:px-16 mx-auto flex flex-col items-center gap-10 lg:gap-14">
@@ -64,7 +32,7 @@ export default function RegionalPartners() {
       {/* Stacked Carousels */}
       <div className="w-full flex flex-col gap-10 md:gap-12 mt-12 md:mt-16">
         {["USA", "India", "Caribbean", "Thailand"].map((regionKey, regionIndex) => {
-          const partners: Partner[] = PARTNERS[regionKey as RegionKey] || [];
+          const partners: Partner[] = partnersData[regionKey as RegionKey] || [];
           if (partners.length === 0) return null;
 
           const isSingle = partners.length === 1;
