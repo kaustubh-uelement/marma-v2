@@ -18,11 +18,16 @@ const fallBackBlog = [
   {
     id: "1",
     slug: "best-healthcare-cybersecurity-solutions",
-    title: "Healthcare Cybersecurity Solutions: Protecting Patient Data from Modern Cyber Threats",
-    metaTitle: "Best Healthcare Cybersecurity Solutions to Protect Patient Data",
-    metaDescription: "Discover how healthcare cybersecurity solutions protect patient data, prevent ransomware attacks, and secure healthcare systems. Learn how Marma Security supports cybersecurity for healthcare organizations.",
-    excerpt: "Healthcare organizations are facing increasing cyber threats that put sensitive patient information and critical systems at risk. This blog explains how healthcare cybersecurity solutions help protect patient data, prevent ransomware and phishing attacks, and secure healthcare networks. Learn how Marma Security supports healthcare providers with AI-powered cybersecurity solutions designed to strengthen digital protection, improve security readiness, and safeguard modern healthcare environments.",
-    altText: "Healthcare cybersecurity solutions banner by Marma Security protecting patient data from modern cyber threats.",
+    title:
+      "Healthcare Cybersecurity Solutions: Protecting Patient Data from Modern Cyber Threats",
+    metaTitle:
+      "Best Healthcare Cybersecurity Solutions to Protect Patient Data",
+    metaDescription:
+      "Discover how healthcare cybersecurity solutions protect patient data, prevent ransomware attacks, and secure healthcare systems. Learn how Marma Security supports cybersecurity for healthcare organizations.",
+    excerpt:
+      "Healthcare organizations are facing increasing cyber threats that put sensitive patient information and critical systems at risk. This blog explains how healthcare cybersecurity solutions help protect patient data, prevent ransomware and phishing attacks, and secure healthcare networks. Learn how Marma Security supports healthcare providers with AI-powered cybersecurity solutions designed to strengthen digital protection, improve security readiness, and safeguard modern healthcare environments.",
+    altText:
+      "Healthcare cybersecurity solutions banner by Marma Security protecting patient data from modern cyber threats.",
     content: `
       <h2>Introduction</h2>
       <p>The healthcare industry is rapidly adopting digital technologies such as EHR, cloud systems, and connected medical devices to improve patient care. However, this digital transformation has also increased cybersecurity challenges like ransomware, phishing, and data breaches.</p>
@@ -181,11 +186,15 @@ const fallBackBlog = [
   {
     id: "2",
     slug: "best-education-cybersecurity-solutions",
-    title: "Cybersecurity for Educational Institutions: Protecting Schools, Colleges, and Universities from Modern Cyber Threats",
+    title:
+      "Cybersecurity for Educational Institutions: Protecting Schools, Colleges, and Universities from Modern Cyber Threats",
     metaTitle: "Cybersecurity for Educational Institutions | Marma Security",
-    metaDescription: "Discover how cybersecurity solutions protect educational institutions, student data, campus networks, and research systems from ransomware, phishing, and modern cyber threats using AI-powered security solutions.",
-    excerpt: "Educational institutions have become one of the fastest-growing targets for cybercriminals due to their large attack surface, valuable student data, research intellectual property, cloud learning environments, and interconnected campus networks. This blog explores the major cybersecurity threats facing educational institutions and how AI-powered cybersecurity solutions help schools, colleges, and universities strengthen cyber resilience.",
-    altText: "MarmaSecurity Cybersecurity for Educational Institutions banner highlighting student data protection, campus network security, secure learning environments, AI-powered threat detection, and cybersecurity services for schools and universities.",
+    metaDescription:
+      "Discover how cybersecurity solutions protect educational institutions, student data, campus networks, and research systems from ransomware, phishing, and modern cyber threats using AI-powered security solutions.",
+    excerpt:
+      "Educational institutions have become one of the fastest-growing targets for cybercriminals due to their large attack surface, valuable student data, research intellectual property, cloud learning environments, and interconnected campus networks. This blog explores the major cybersecurity threats facing educational institutions and how AI-powered cybersecurity solutions help schools, colleges, and universities strengthen cyber resilience.",
+    altText:
+      "MarmaSecurity Cybersecurity for Educational Institutions banner highlighting student data protection, campus network security, secure learning environments, AI-powered threat detection, and cybersecurity services for schools and universities.",
     content: `
       <h2>Introduction</h2>
       <p>The education sector is experiencing unprecedented digital transformation. Modern educational institutions rely on digital classrooms, cloud computing, learning management systems (LMS), student information systems (SIS), artificial intelligence tools, remote learning platforms, research databases, and connected campus infrastructure.</p>
@@ -494,13 +503,15 @@ const fallBackBlog = [
     readTime: "8 min read",
     category: "Education",
     imageUrl: "/images/blogs/education-cybersecurity.png",
-  }
-]
+  },
+];
 
 export async function getBlogs(): Promise<BlogPost[]> {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
     const tenantSlug = process.env.NEXT_PUBLIC_TENANT_SLUG;
+    console.log(apiUrl);
+    console.log(tenantSlug);
 
     if (!tenantSlug) {
       console.warn("Missing NEXT_PUBLIC_TENANT_SLUG in env");
@@ -509,9 +520,9 @@ export async function getBlogs(): Promise<BlogPost[]> {
 
     const res = await fetch(`${apiUrl}/api/v1/blog/active`, {
       headers: {
-        'x-tenant-slug': tenantSlug,
+        "x-tenant-slug": tenantSlug,
       },
-      next: { revalidate: 60 }
+      next: { revalidate: 60 },
     });
 
     if (!res.ok) {
@@ -521,6 +532,7 @@ export async function getBlogs(): Promise<BlogPost[]> {
 
     const json = await res.json();
     const data = Array.isArray(json) ? json : json.data || [];
+    console.log("data here", json);
 
     if (data.length === 0) {
       return fallBackBlog;
@@ -535,33 +547,34 @@ export async function getBlogs(): Promise<BlogPost[]> {
 
 export async function getBlogBySlug(slug: string): Promise<BlogPost | null> {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
     const tenantSlug = process.env.NEXT_PUBLIC_TENANT_SLUG;
 
     if (!tenantSlug) {
-      return fallBackBlog.find(blog => blog.slug === slug) || null;
+      return fallBackBlog.find((blog) => blog.slug === slug) || null;
     }
 
     const res = await fetch(`${apiUrl}/api/v1/blog/slug/${slug}`, {
       headers: {
-        'x-tenant-slug': tenantSlug,
+        "x-tenant-slug": tenantSlug,
       },
-      next: { revalidate: 60 }
+      next: { revalidate: 60 },
     });
 
     if (!res.ok) {
-      return fallBackBlog.find(blog => blog.slug === slug) || null;
+      return fallBackBlog.find((blog) => blog.slug === slug) || null;
     }
 
     const json = await res.json();
     const data = json.data || json;
 
-    if (!data || !data.id) return fallBackBlog.find(blog => blog.slug === slug) || null;
+    if (!data || !data.id)
+      return fallBackBlog.find((blog) => blog.slug === slug) || null;
 
     return mapBackendToBlog(data);
   } catch (error) {
     console.error("Error fetching blog by slug:", error);
-    return fallBackBlog.find(blog => blog.slug === slug) || null;
+    return fallBackBlog.find((blog) => blog.slug === slug) || null;
   }
 }
 
@@ -570,10 +583,10 @@ function mapBackendToBlog(backendBlog: any): BlogPost {
   let formattedDate = backendBlog.published_at || new Date().toISOString();
   try {
     const dateObj = new Date(formattedDate);
-    formattedDate = new Intl.DateTimeFormat('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
+    formattedDate = new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
     }).format(dateObj);
   } catch (e) {
     // keep original string if invalid
@@ -588,10 +601,14 @@ function mapBackendToBlog(backendBlog: any): BlogPost {
     author: backendBlog.author_name || "Admin",
     date: formattedDate,
     readTime: backendBlog.reading_time || "5 min read",
-    category: backendBlog.tags && backendBlog.tags.length > 0 ? backendBlog.tags[0] : "General",
+    category:
+      backendBlog.tags && backendBlog.tags.length > 0
+        ? backendBlog.tags[0]
+        : "General",
     imageUrl: backendBlog.cover_image_url || undefined,
     altText: backendBlog.title || "Blog image",
     metaTitle: backendBlog.seo?.title || backendBlog.title || undefined,
-    metaDescription: backendBlog.seo?.description || backendBlog.excerpt || undefined,
+    metaDescription:
+      backendBlog.seo?.description || backendBlog.excerpt || undefined,
   };
 }
