@@ -510,8 +510,8 @@ export async function getBlogs(): Promise<BlogPost[]> {
   try {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
     const tenantSlug = process.env.NEXT_PUBLIC_TENANT_SLUG;
-    console.log(apiUrl);
-    console.log(tenantSlug);
+    // console.log(apiUrl);
+    // console.log(tenantSlug);
 
     if (!tenantSlug) {
       console.warn("Missing NEXT_PUBLIC_TENANT_SLUG in env");
@@ -532,7 +532,7 @@ export async function getBlogs(): Promise<BlogPost[]> {
 
     const json = await res.json();
     const data = Array.isArray(json) ? json : json.data || [];
-    console.log("data here", json);
+    // console.log("data here", json);
 
     if (data.length === 0) {
       return fallBackBlog;

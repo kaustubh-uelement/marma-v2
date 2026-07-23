@@ -2,16 +2,19 @@ import React from "react";
 import CareerHero from "@/components/careers/CareerHero";
 import WhyMarma from "@/components/careers/WhyMarma";
 import JobBoard from "@/components/careers/JobBoard";
+import { getJobs } from "@/lib/careers";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.marmasec.com";
 const absoluteImageUrl = `${baseUrl}/images/partners/Job_hero.webp`;
 
 export const metadata = {
   title: "Careers | Join Marma Security",
-  description: "Join the mission to radically simplify cybersecurity. Explore open roles at Marma Security and build the future of digital defense.",
-    openGraph: {
+  description:
+    "Join the mission to radically simplify cybersecurity. Explore open roles at Marma Security and build the future of digital defense.",
+  openGraph: {
     title: "Careers | Join Marma Security",
-    description: "Join the mission to radically simplify cybersecurity. Explore open roles at Marma Security and build the future of digital defense.",
+    description:
+      "Join the mission to radically simplify cybersecurity. Explore open roles at Marma Security and build the future of digital defense.",
     url: "/careers",
     siteName: "Marma Security",
     images: [
@@ -28,12 +31,15 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Careers | Join Marma Security",
-    description: "Join the mission to radically simplify cybersecurity. Explore open roles at Marma Security and build the future of digital defense.",
+    description:
+      "Join the mission to radically simplify cybersecurity. Explore open roles at Marma Security and build the future of digital defense.",
     images: [absoluteImageUrl],
   },
 };
 
-export default function CareersPage() {
+export default async function CareersPage() {
+  const jobs = await getJobs();
+
   return (
     <main className="flex flex-col min-h-screen bg-white">
       {/* Hero Section */}
@@ -43,8 +49,7 @@ export default function CareersPage() {
       <WhyMarma />
 
       {/* Job Board Section */}
-      <JobBoard />
-
+      <JobBoard jobs={jobs} />
     </main>
   );
 }
