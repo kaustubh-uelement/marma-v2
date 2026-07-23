@@ -3,12 +3,10 @@
 import React, { useState } from "react";
 import { Send, CheckCircle2, AlertCircle, Paperclip } from "lucide-react";
 import { submitApplication } from "@/lib/careers";
+import type { JobWithSubmitUrl } from "@/lib/careers";
 
 interface ApplicationFormProps {
-  job: {
-    id: string | number;
-    title: string;
-  };
+  job: JobWithSubmitUrl;
   onSuccess: () => void;
   isFilled?: boolean;
 }
@@ -141,7 +139,7 @@ export default function ApplicationForm({
     );
     formData.append("additionalQuestions[jobTitle]", job.title);
 
-    const result = await submitApplication(job.id, formData);
+    const result = await submitApplication(job.submitUrl, formData);
 
     setIsSubmitting(false);
 

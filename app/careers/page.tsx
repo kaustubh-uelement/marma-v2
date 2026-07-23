@@ -2,7 +2,7 @@ import React from "react";
 import CareerHero from "@/components/careers/CareerHero";
 import WhyMarma from "@/components/careers/WhyMarma";
 import JobBoard from "@/components/careers/JobBoard";
-import { getJobs } from "@/lib/careers";
+import { getJobs, buildApplicationUrl } from "@/lib/careers";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.marmasec.com";
 const absoluteImageUrl = `${baseUrl}/images/partners/Job_hero.webp`;
@@ -40,6 +40,11 @@ export const metadata = {
 export default async function CareersPage() {
   const jobs = await getJobs();
 
+  const jobsWithSubmitUrl = jobs.map((job) => ({
+    ...job,
+    submitUrl: buildApplicationUrl(job.id),
+  }));
+
   return (
     <main className="flex flex-col min-h-screen bg-white">
       {/* Hero Section */}
@@ -49,7 +54,7 @@ export default async function CareersPage() {
       <WhyMarma />
 
       {/* Job Board Section */}
-      <JobBoard jobs={jobs} />
+      <JobBoard jobs={jobsWithSubmitUrl} />
     </main>
   );
 }

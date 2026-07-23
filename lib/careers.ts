@@ -11,36 +11,30 @@ export interface Job {
   responsibilities: string[];
 }
 
-const getRuntimeEnv = () =>
-  typeof window !== "undefined" && (window as any).__ENV__
-    ? (window as any).__ENV__
-    : {};
-
-const getBuildEnv = () =>
-  typeof process !== "undefined" && process.env ? process.env : {};
-
-const readEnv = (key: string, fallback = "") => {
-  const runtimeValue = getRuntimeEnv()?.[key];
-  if (runtimeValue !== undefined && runtimeValue !== "") return runtimeValue;
-  const buildValue = (getBuildEnv() as any)?.[key];
-  if (buildValue !== undefined && buildValue !== "") return buildValue;
-  return fallback;
-};
+export interface JobWithSubmitUrl extends Job {
+  submitUrl: string;
+}
 
 const trimTrailingSlash = (value = "") =>
   typeof value === "string" ? value.replace(/\/+$/, "") : "";
 
-const withLeadingSlash = (value = "") =>
-  typeof value === "string" && value.startsWith("/") ? value : `/${value}`;
-
 export const getCareersApiBaseUrl = () =>
-  trimTrailingSlash(readEnv("NEXT_PUBLIC_API_URL", "http://localhost:8000"));
+  trimTrailingSlash(process.env.NEXT_PUBLIC_API_URL || "");
 
-export const getTenantSlug = () => readEnv("NEXT_PUBLIC_TENANT_SLUG", "");
+export const getTenantSlug = () => process.env.NEXT_PUBLIC_TENANT_SLUG || "";
 
 const buildPublicCareersBaseUrl = () => {
   const base = getCareersApiBaseUrl();
-  return `${base}${withLeadingSlash("api/v1/public/careers")}`;
+  return `${base}/api/v1/public/careers`;
+};
+
+export const buildApplicationUrl = (careerId: string | number) => {
+  const base = getCareersApiBaseUrl();
+  const slug = getTenantSlug();
+
+  return `${base}/api/v1/public/careers/${encodeURIComponent(
+    String(careerId),
+  )}/applications?slug=${encodeURIComponent(slug)}`;
 };
 
 // Fallback data — identical to the current hardcoded jobs array in JobBoard.tsx
@@ -246,13 +240,13 @@ export async function getJobs(): Promise<Job[]> {
   }
 }
 
-export const buildApplicationUrl = (careerId: string | number) => {
-  const slug = getTenantSlug();
-  const base = getCareersApiBaseUrl();
-  return `${base}${withLeadingSlash(
-    `api/v1/public/careers/${encodeURIComponent(String(careerId))}/applications`,
-  )}?slug=${encodeURIComponent(slug)}`;
-};
+// export const buildApplicationUrl = (careerId: string | number) => {
+//   const slug = getTenantSlug();
+//   const base = getCareersApiBaseUrl();
+//   return `${base}${withLeadingSlash(
+//     `api/v1/public/careers/${encodeURIComponent(String(careerId))}/applications`,
+//   )}?slug=${encodeURIComponent(slug)}`;
+// };
 
 export interface ApplicationResult {
   success: boolean;
@@ -266,17 +260,14 @@ export interface ApplicationResult {
  * relay if the primary API is unreachable, preserving existing behavior.
  */
 export async function submitApplication(
-  careerId: string | number,
+  submitUrl: string,
   formData: FormData,
 ): Promise<ApplicationResult> {
   try {
-    const response = await fetch(buildApplicationUrl(careerId), {
+    const response = await fetch(submitUrl, {
       method: "POST",
       body: formData,
-      // No Content-Type header — browser sets multipart boundary automatically
     });
-
-    console.log(response)
 
     if (response.status === 201 || response.ok) {
       return {
@@ -306,7 +297,7 @@ export async function submitApplication(
       "Primary application submission failed, falling back:",
       error,
     );
-    return submitApplicationFallback(formData);
+    // return submitApplicationFallback(formData);
   }
 }
 

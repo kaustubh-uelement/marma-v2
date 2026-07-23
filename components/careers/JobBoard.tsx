@@ -10,10 +10,10 @@ import {
   ChevronUp,
 } from "lucide-react";
 import ApplicationForm from "./ApplicationForm";
-import type { Job } from "@/lib/careers";
+import type { Job, JobWithSubmitUrl } from "@/lib/careers";
 
 interface JobBoardProps {
-  jobs: Job[];
+  jobs: JobWithSubmitUrl[];
 }
 
 export default function JobBoard({ jobs }: JobBoardProps) {
