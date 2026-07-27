@@ -4,6 +4,12 @@ import React, { useState } from "react";
 import { Send, CheckCircle2, AlertCircle, Paperclip } from "lucide-react";
 import { submitApplication } from "@/lib/careers";
 import type { JobWithSubmitUrl } from "@/lib/careers";
+import {
+  validateApplicationFields,
+  validateDocumentFile,
+  sanitizePhone,
+  type ApplicationFieldErrors,
+} from "@/lib/formValidation";
 
 interface ApplicationFormProps {
   job: JobWithSubmitUrl;
@@ -11,131 +17,105 @@ interface ApplicationFormProps {
   isFilled?: boolean;
 }
 
-const ALLOWED_MIME_TYPES = [
-  "application/pdf",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-];
-
-const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx"];
-const MAX_FILE_SIZE_MB = 5;
-const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
-
 export default function ApplicationForm({
   job,
   onSuccess,
   isFilled = false,
 }: ApplicationFormProps) {
+  const [formValues, setFormValues] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    city: "",
+    totalExperience: "",
+    relevantExperience: "",
+    currentCTC: "",
+    expectedCTC: "",
+    noticePeriod: "",
+  });
+  const [errors, setErrors] = useState<ApplicationFieldErrors>({});
   const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [resumeError, setResumeError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [validationError, setValidationError] = useState("");
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormValues((prev) => ({ ...prev, [name]: value }));
+    if (errors[name as keyof ApplicationFieldErrors]) {
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
+    if (validationError) setValidationError("");
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const sanitized = sanitizePhone(e.target.value);
+    setFormValues((prev) => ({ ...prev, phone: sanitized }));
+    if (errors.phone) setErrors((prev) => ({ ...prev, phone: undefined }));
+    if (validationError) setValidationError("");
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const file = e.target.files?.[0] ?? null;
+    const fileErr = validateDocumentFile(file);
 
-    if (!ALLOWED_MIME_TYPES.includes(file.type)) {
-      setValidationError(
-        "Invalid file type. Only PDF, DOC, or DOCX files are allowed.",
-      );
-      e.target.value = "";
+    if (fileErr) {
+      setResumeError(fileErr);
       setResumeFile(null);
+      e.target.value = "";
       return;
     }
 
-    const ext = "." + file.name.split(".").pop()?.toLowerCase();
-    if (!ALLOWED_EXTENSIONS.includes(ext)) {
-      setValidationError(
-        "Invalid file extension. Only .pdf, .doc, .docx are allowed.",
-      );
-      e.target.value = "";
-      setResumeFile(null);
-      return;
-    }
-
-    if (file.size > MAX_FILE_SIZE_BYTES) {
-      setValidationError(
-        `File too large. Maximum allowed size is ${MAX_FILE_SIZE_MB}MB.`,
-      );
-      e.target.value = "";
-      setResumeFile(null);
-      return;
-    }
-
-    setValidationError("");
+    setResumeError("");
     setResumeFile(file);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!resumeFile) {
-      setValidationError("Please attach your resume before submitting.");
+    const fieldErrors = validateApplicationFields(formValues);
+    const fileErr = validateDocumentFile(resumeFile);
+
+    if (fileErr) setResumeError(fileErr);
+    if (Object.keys(fieldErrors).length > 0 || fileErr) {
+      setErrors(fieldErrors);
+      setValidationError("Please fix the errors below and try again.");
       return;
     }
 
-    if (!ALLOWED_MIME_TYPES.includes(resumeFile.type)) {
-      setValidationError(
-        "Invalid file type. Only PDF, DOC, or DOCX files are allowed.",
-      );
-      return;
-    }
-
-    if (resumeFile.size > MAX_FILE_SIZE_BYTES) {
-      setValidationError(
-        `Resume file size must be less than ${MAX_FILE_SIZE_MB}MB.`,
-      );
-      return;
-    }
-
+    setErrors({});
+    setResumeError("");
     setValidationError("");
     setIsSubmitting(true);
 
-    const formEl = e.currentTarget;
-    const getVal = (name: string) =>
-      (formEl.elements.namedItem(name) as HTMLInputElement)?.value?.trim() ||
-      "";
-
-    const fullName = getVal("Name");
-    const email = getVal("Email");
-    const phone = getVal("Phone");
-    const city = getVal("City");
-    const totalExperience = getVal("Total Experience");
-    const relevantExperience = getVal("Relevant Experience");
-    const currentCTC = getVal("Current CTC");
-    const expectedCTC = getVal("Expected CTC");
-    const noticePeriod = getVal("Notice Period");
-
-    // Backend expects yearsOfExperience as a number; extract leading digits
-    // from free-text values like "3 Years" so validation doesn't fail.
-    const numericExperienceMatch = totalExperience.match(/[\d.]+/);
+    const numericExperienceMatch = formValues.totalExperience.match(/[\d.]+/);
     const yearsOfExperience = numericExperienceMatch
       ? parseFloat(numericExperienceMatch[0])
       : undefined;
 
     const formData = new FormData();
-    formData.append("fullName", fullName);
-    formData.append("email", email);
-    formData.append("phone", phone);
-    formData.append("currentLocation", city);
+    formData.append("fullName", formValues.fullName.trim());
+    formData.append("email", formValues.email.trim());
+    formData.append("phone", formValues.phone.trim());
+    formData.append("currentLocation", formValues.city.trim());
     if (yearsOfExperience !== undefined) {
       formData.append("yearsOfExperience", String(yearsOfExperience));
     }
-    formData.append("currentCompensation", currentCTC);
-    formData.append("expectedCompensation", expectedCTC);
-    formData.append("noticePeriod", noticePeriod);
+    formData.append("currentCompensation", formValues.currentCTC.trim());
+    formData.append("expectedCompensation", formValues.expectedCTC.trim());
+    formData.append("noticePeriod", formValues.noticePeriod.trim());
     formData.append("consentToDataProcessing", "true");
     formData.append("source", "careers-page");
-    formData.append("resume", resumeFile);
+    formData.append("resume", resumeFile as File);
 
-    // Preserve original free-text values (e.g. "3 Years", "e.g., 2 Years")
-    // in additionalQuestions so nothing entered by the applicant is lost,
-    // even fields the backend schema doesn't explicitly model.
-    formData.append("additionalQuestions[totalExperience]", totalExperience);
+    formData.append(
+      "additionalQuestions[totalExperience]",
+      formValues.totalExperience.trim(),
+    );
     formData.append(
       "additionalQuestions[relevantExperience]",
-      relevantExperience,
+      formValues.relevantExperience.trim(),
     );
     formData.append("additionalQuestions[jobTitle]", job.title);
 
@@ -171,9 +151,13 @@ export default function ApplicationForm({
     );
   }
 
+  const inputClass = (hasError?: string) =>
+    `w-full px-5 py-3 bg-[#F8FAFC] border rounded-xl focus:outline-none focus:border-brand-red/50 transition-colors placeholder-slate-400/60 disabled:opacity-50 disabled:cursor-not-allowed ${
+      hasError ? "border-red-400" : "border-[#E2E8F0]"
+    }`;
+
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-      {/* Validation Error Banner */}
+    <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
       {validationError && (
         <div className="p-4 bg-red-50 text-brand-red rounded-xl flex items-center gap-3 font-title text-[15px] border border-red-100">
           <AlertCircle className="w-5 h-5 shrink-0" />
@@ -187,26 +171,34 @@ export default function ApplicationForm({
             Full Name
           </label>
           <input
-            required
             type="text"
-            name="Name"
+            name="fullName"
+            value={formValues.fullName}
+            onChange={handleChange}
             disabled={isFilled}
             placeholder={isFilled ? "Applications Closed" : "John Doe"}
-            className="w-full px-5 py-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl focus:outline-none focus:border-brand-red/50 transition-colors placeholder-slate-400/60 disabled:opacity-50 disabled:cursor-not-allowed"
+            className={inputClass(errors.fullName)}
           />
+          {errors.fullName && (
+            <span className="text-xs text-red-600 px-1">{errors.fullName}</span>
+          )}
         </div>
         <div className="flex flex-col gap-2">
           <label className="text-[14px] font-semibold text-[#1E293B] capitalize tracking-wider">
             Email
           </label>
           <input
-            required
             type="email"
-            name="Email"
+            name="email"
+            value={formValues.email}
+            onChange={handleChange}
             disabled={isFilled}
             placeholder={isFilled ? "Applications Closed" : "john@example.com"}
-            className="w-full px-5 py-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl focus:outline-none focus:border-brand-red/50 transition-colors placeholder-slate-400/60 disabled:opacity-50 disabled:cursor-not-allowed"
+            className={inputClass(errors.email)}
           />
+          {errors.email && (
+            <span className="text-xs text-red-600 px-1">{errors.email}</span>
+          )}
         </div>
       </div>
 
@@ -216,26 +208,36 @@ export default function ApplicationForm({
             Phone
           </label>
           <input
-            required
             type="tel"
-            name="Phone"
+            name="phone"
+            value={formValues.phone}
+            onChange={handlePhoneChange}
             disabled={isFilled}
             placeholder={isFilled ? "Applications Closed" : "+91 98765 43210"}
-            className="w-full px-5 py-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl focus:outline-none focus:border-brand-red/50 transition-colors placeholder-slate-400/60 disabled:opacity-50 disabled:cursor-not-allowed"
+            className={inputClass(errors.phone)}
+            inputMode="tel"
+            maxLength={15}
           />
+          {errors.phone && (
+            <span className="text-xs text-red-600 px-1">{errors.phone}</span>
+          )}
         </div>
         <div className="flex flex-col gap-2">
           <label className="text-[14px] font-semibold text-[#1E293B] capitalize tracking-wider">
             City
           </label>
           <input
-            required
             type="text"
-            name="City"
+            name="city"
+            value={formValues.city}
+            onChange={handleChange}
             disabled={isFilled}
             placeholder={isFilled ? "Applications Closed" : "Pune"}
-            className="w-full px-5 py-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl focus:outline-none focus:border-brand-red/50 transition-colors placeholder-slate-400/60 disabled:opacity-50 disabled:cursor-not-allowed"
+            className={inputClass(errors.city)}
           />
+          {errors.city && (
+            <span className="text-xs text-red-600 px-1">{errors.city}</span>
+          )}
         </div>
       </div>
 
@@ -245,26 +247,38 @@ export default function ApplicationForm({
             Total Experience
           </label>
           <input
-            required
             type="text"
-            name="Total Experience"
+            name="totalExperience"
+            value={formValues.totalExperience}
+            onChange={handleChange}
             disabled={isFilled}
             placeholder={isFilled ? "Applications Closed" : "e.g., 3 Years"}
-            className="w-full px-5 py-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl focus:outline-none focus:border-brand-red/50 transition-colors placeholder-slate-400/60 disabled:opacity-50 disabled:cursor-not-allowed"
+            className={inputClass(errors.totalExperience)}
           />
+          {errors.totalExperience && (
+            <span className="text-xs text-red-600 px-1">
+              {errors.totalExperience}
+            </span>
+          )}
         </div>
         <div className="flex flex-col gap-2">
           <label className="text-[14px] font-semibold text-[#1E293B] capitalize tracking-wider">
             Relevant Experience
           </label>
           <input
-            required
             type="text"
-            name="Relevant Experience"
+            name="relevantExperience"
+            value={formValues.relevantExperience}
+            onChange={handleChange}
             disabled={isFilled}
             placeholder={isFilled ? "Applications Closed" : "e.g., 2 Years"}
-            className="w-full px-5 py-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl focus:outline-none focus:border-brand-red/50 transition-colors placeholder-slate-400/60 disabled:opacity-50 disabled:cursor-not-allowed"
+            className={inputClass(errors.relevantExperience)}
           />
+          {errors.relevantExperience && (
+            <span className="text-xs text-red-600 px-1">
+              {errors.relevantExperience}
+            </span>
+          )}
         </div>
       </div>
 
@@ -274,26 +288,38 @@ export default function ApplicationForm({
             Current CTC
           </label>
           <input
-            required
             type="text"
-            name="Current CTC"
+            name="currentCTC"
+            value={formValues.currentCTC}
+            onChange={handleChange}
             disabled={isFilled}
             placeholder={isFilled ? "Applications Closed" : "e.g., 8 LPA"}
-            className="w-full px-5 py-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl focus:outline-none focus:border-brand-red/50 transition-colors placeholder-slate-400/60 disabled:opacity-50 disabled:cursor-not-allowed"
+            className={inputClass(errors.currentCTC)}
           />
+          {errors.currentCTC && (
+            <span className="text-xs text-red-600 px-1">
+              {errors.currentCTC}
+            </span>
+          )}
         </div>
         <div className="flex flex-col gap-2">
           <label className="text-[14px] font-semibold text-[#1E293B] capitalize tracking-wider">
             Expected CTC
           </label>
           <input
-            required
             type="text"
-            name="Expected CTC"
+            name="expectedCTC"
+            value={formValues.expectedCTC}
+            onChange={handleChange}
             disabled={isFilled}
             placeholder={isFilled ? "Applications Closed" : "e.g., 10 LPA"}
-            className="w-full px-5 py-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl focus:outline-none focus:border-brand-red/50 transition-colors placeholder-slate-400/60 disabled:opacity-50 disabled:cursor-not-allowed"
+            className={inputClass(errors.expectedCTC)}
           />
+          {errors.expectedCTC && (
+            <span className="text-xs text-red-600 px-1">
+              {errors.expectedCTC}
+            </span>
+          )}
         </div>
       </div>
 
@@ -302,13 +328,19 @@ export default function ApplicationForm({
           Notice Period
         </label>
         <input
-          required
           type="text"
-          name="Notice Period"
+          name="noticePeriod"
+          value={formValues.noticePeriod}
+          onChange={handleChange}
           disabled={isFilled}
           placeholder={isFilled ? "Applications Closed" : "e.g., 30 Days"}
-          className="w-full px-5 py-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl focus:outline-none focus:border-brand-red/50 transition-colors placeholder-slate-400/60 disabled:opacity-50 disabled:cursor-not-allowed"
+          className={inputClass(errors.noticePeriod)}
         />
+        {errors.noticePeriod && (
+          <span className="text-xs text-red-600 px-1">
+            {errors.noticePeriod}
+          </span>
+        )}
       </div>
 
       <div className="flex flex-col gap-2">
@@ -320,9 +352,7 @@ export default function ApplicationForm({
             isFilled
               ? "cursor-not-allowed bg-slate-50 border-slate-200"
               : "cursor-pointer hover:bg-[#F1F5F9] border-[#CBD5E1]"
-          } ${
-            validationError && !resumeFile && !isFilled ? "border-red-400" : ""
-          }`}
+          } ${resumeError ? "border-red-400" : ""}`}
         >
           <Paperclip className="w-5 h-5 text-[#64748B]" />
           <span className="text-[#64748B] font-medium text-[15px]">
@@ -341,6 +371,9 @@ export default function ApplicationForm({
             onChange={handleFileChange}
           />
         </label>
+        {resumeError && (
+          <span className="text-xs text-red-600 px-1">{resumeError}</span>
+        )}
       </div>
 
       <button
