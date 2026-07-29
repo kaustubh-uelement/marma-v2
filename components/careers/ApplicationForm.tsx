@@ -119,7 +119,12 @@ export default function ApplicationForm({
     );
     formData.append("additionalQuestions[jobTitle]", job.title);
 
-    const result = await submitApplication(job.submitUrl, formData);
+    // Required by the local proxy route to build the upstream URL
+    formData.append("careerId", String(job.id));
+
+    // Always submit to the local proxy — never job.submitUrl directly —
+    // to avoid browser CORS against the CloudFront-hosted careers API.
+    const result = await submitApplication("/api/application", formData);
 
     setIsSubmitting(false);
 
@@ -364,7 +369,7 @@ export default function ApplicationForm({
           </span>
           <input
             type="file"
-            name="Attachment"
+            name="resume"
             disabled={isFilled}
             className="hidden"
             accept=".pdf,.doc,.docx"

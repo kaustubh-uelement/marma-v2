@@ -28,6 +28,9 @@ const buildPublicCareersBaseUrl = () => {
   return `${base}/api/v1/public/careers`;
 };
 
+// Kept for reference / non-form use cases. The application form itself
+// submits to the local "/api/application" proxy, not directly to this URL,
+// to avoid browser CORS issues against the CloudFront-hosted careers API.
 export const buildApplicationUrl = (careerId: string | number) => {
   const base = getCareersApiBaseUrl();
   const slug = getTenantSlug();
@@ -204,8 +207,6 @@ const toJob = (career: any, index = 0): Job => {
 };
 
 const fetchJson = async (url: string) => {
-  console.log("build url", url);
-
   const response = await fetch(url, {
     method: "GET",
     headers: { Accept: "application/json" },
@@ -228,8 +229,6 @@ export async function getJobs(): Promise<Job[]> {
     const url = `${buildPublicCareersBaseUrl()}?slug=${encodeURIComponent(slug)}`;
     const payload = await fetchJson(url);
     const rows = extractRows(payload);
-    // console.log("payload", payload);
-    // console.log("rows", rows);
 
     if (rows.length === 0) return fallbackJobs;
 
@@ -240,14 +239,6 @@ export async function getJobs(): Promise<Job[]> {
   }
 }
 
-// export const buildApplicationUrl = (careerId: string | number) => {
-//   const slug = getTenantSlug();
-//   const base = getCareersApiBaseUrl();
-//   return `${base}${withLeadingSlash(
-//     `api/v1/public/careers/${encodeURIComponent(String(careerId))}/applications`,
-//   )}?slug=${encodeURIComponent(slug)}`;
-// };
-
 export interface ApplicationResult {
   success: boolean;
   message: string;
@@ -255,9 +246,11 @@ export interface ApplicationResult {
 }
 
 /**
- * Submits the job application via the real careers API using FormData
- * (multer-compatible multipart upload). Falls back to the formsubmit.co
- * relay if the primary API is unreachable, preserving existing behavior.
+ * Submits the job application through the local Next.js proxy route
+ * ("/api/application"), which forwards the multipart FormData to the
+ * real careers API server-side. This avoids browser CORS restrictions
+ * since the browser only ever talks to the same origin.
+ * Falls back to the formsubmit.co relay if the proxy is unreachable.
  */
 export async function submitApplication(
   submitUrl: string,
@@ -269,10 +262,14 @@ export async function submitApplication(
       body: formData,
     });
 
+    const errorData = await response.json().catch(() => null);
+
     if (response.status === 201 || response.ok) {
       return {
         success: true,
-        message: "Your application has been submitted successfully!",
+        message:
+          errorData?.message ||
+          "Your application has been submitted successfully!",
       };
     }
 
@@ -281,15 +278,16 @@ export async function submitApplication(
         success: false,
         isDuplicate: true,
         message:
+          errorData?.message ||
           "You've already applied for this position with this email address.",
       };
     }
 
-    const errorData = await response.json().catch(() => null);
     return {
       success: false,
       message:
         errorData?.message ||
+        errorData?.error ||
         `Submission failed (${response.status}). Please try again.`,
     };
   } catch (error) {
@@ -317,13 +315,12 @@ async function submitApplicationFallback(
       };
     }
 
-    const response = await fetch(`https://formsubmit.co/${email}`, {
+    await fetch(`https://formsubmit.co/${email}`, {
       method: "POST",
       body: formData,
       mode: "no-cors",
     });
 
-    // formsubmit.co with no-cors returns opaque response; assume success if no throw
     return {
       success: true,
       message: "Your application has been submitted successfully!",
