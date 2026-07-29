@@ -4,7 +4,13 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { getAvatarColor, getInitials, type Partner } from "@/lib/partnerData";
 
-export function PartnerLogo({ partner, index }: { partner: Partner; index: number }) {
+export function PartnerLogo({
+  partner,
+  index,
+}: {
+  partner: Partner;
+  index: number;
+}) {
   const [imgError, setImgError] = useState(false);
 
   if (imgError || !partner.logo) {
