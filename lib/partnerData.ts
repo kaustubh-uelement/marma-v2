@@ -86,50 +86,14 @@ export const FALLBACK_PARTNERS: Record<RegionKey, Partner[]> = {
     },
   ],
   India: [
-    {
-      name: "UElement Technologies",
-      website: "https://uelement.in/",
-      logo: "/images/partners/logos/uelement.svg",
-      region: "India",
-      theme: "dark",
-    },
-    {
-      name: "Universys Technologies",
-      website: "https://universys.in/",
-      logo: "/images/partners/logos/universys.png",
-      region: "India",
-    },
-    {
-      name: "LN InfoSec Pvt Ltd",
-      website: "https://lninfosec.com/",
-      logo: "/images/partners/logos/lninfosec.png",
-      region: "India",
-      theme: "dark",
-    },
-    {
-      name: "Tapasya Technovation",
-      website: "https://tapasyatech.in/",
-      logo: "/images/partners/logos/tapasya.png",
-      region: "India",
-    },
-    {
-      name: "Forenx Technologies",
-      website: "https://www.forenxtech.com/",
-      logo: "/images/partners/logos/forenx.png",
-      region: "India",
-    },
-    {
-      name: "Atomic IT Solutions",
-      website: "https://atomicits.com/",
-      logo: "/images/partners/logos/atomicits.png",
-      region: "India",
-    },
-    {
-      name: "Axiatix",
-      website: "https://axiatix.com/",
-      logo: "/images/partners/logos/axiatix.png",
-      region: "India",
-    },
+    { name: "UElement Technologies", website: "https://uelement.in/", logo: "/images/partners/logos/uelement.svg", region: "India", theme: "dark" },
+    { name: "Universys Technologies", website: "https://universys.in/", logo: "/images/partners/logos/universys.png", region: "India" },
+    { name: "LN InfoSec Pvt Ltd", website: "https://lninfosec.com/", logo: "/images/partners/logos/lninfosec.png", region: "India", theme: "dark" },
+    { name: "Tapasya Technovation", website: "https://tapasyatech.in/", logo: "/images/partners/logos/tapasya.png", region: "India" },
+    { name: "Forenx Technologies", website: "https://www.forenxtech.com/", logo: "/images/partners/logos/forenx.png", region: "India" },
+    { name: "Atomic IT Solutions", website: "https://atomicits.com/", logo: "/images/partners/logos/atomicits.png", region: "India" },
+    { name: "Axiatix", website: "https://axiatix.com/", logo: "/images/partners/logos/axiatix.png", region: "India" },
+    { name: "ARRA Associates", website: "https://arra-associates.com/", logo: "/images/partners/logos/arra-logo.png", region: "India" },
   ],
   Caribbean: [
     {

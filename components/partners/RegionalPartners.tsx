@@ -53,16 +53,15 @@ export default function RegionalPartners() {
       <div className="w-full flex flex-col gap-10 md:gap-12 mt-12 md:mt-16">
         {["USA", "India", "Caribbean", "Thailand"].map(
           (regionKey, regionIndex) => {
-            const partners: Partner[] =
-              partnersData[regionKey as RegionKey] || [];
+            const partners: Partner[] = partnersData[regionKey as RegionKey] || [];
             if (partners.length === 0) return null;
 
-            const isSingle = partners.length === 1;
+            const isStatic = partners.length <= 2;
 
             // Duplicate the list to create seamless infinite scroll
             // For regions with very few partners (like Thailand), duplicate more times to fill the screen width
             // If there's only one partner, don't duplicate.
-            const duplications = isSingle
+            const duplications = isStatic
               ? 1
               : Math.max(2, Math.ceil(12 / partners.length));
             const carouselItems = Array(duplications).fill(partners).flat();
@@ -70,8 +69,7 @@ export default function RegionalPartners() {
             // Base duration on unique partner count, but ensure a minimum speed
             const baseDuration = Math.max(20, partners.length * 4);
             const animationDuration = `${baseDuration}s`;
-            const animationDirection =
-              regionIndex % 2 === 1 ? "reverse" : "normal";
+            const animationDirection = "normal";
 
             return (
               <div
@@ -87,7 +85,7 @@ export default function RegionalPartners() {
                 {/* Carousel */}
                 <div className="w-full relative">
                   {/* Fade edges - only show if scrolling */}
-                  {!isSingle && (
+                  {!isStatic && (
                     <>
                       <div className="absolute top-0 left-0 w-[80px] md:w-[150px] h-full bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
                       <div className="absolute top-0 right-0 w-[80px] md:w-[150px] h-full bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
@@ -96,13 +94,13 @@ export default function RegionalPartners() {
 
                   {/* Scrolling track */}
                   <div
-                    className={`flex items-center gap-6 md:gap-8 ${
-                      isSingle
+                    className={`flex items-center gap-6 md:gap-8 flex-wrap ${
+                      isStatic
                         ? "px-6 lg:px-16 w-full max-w-[1440px] mx-auto"
                         : "partner-carousel-track"
                     }`}
                     style={
-                      isSingle
+                      isStatic
                         ? undefined
                         : {
                             width: "max-content",

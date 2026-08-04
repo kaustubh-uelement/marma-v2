@@ -4,7 +4,7 @@ const isDev = process.env.NODE_ENV === "development";
 
 const ContentSecurityPolicy = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com https://www.gstatic.com https://www.recaptcha.net https://www.googletagmanager.com",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com https://www.gstatic.com https://www.recaptcha.net https://www.googletagmanager.com https://t.contentsquare.net https://www.clarity.ms https://scripts.clarity.ms https://assets.apollo.io",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com",
   "img-src 'self' data: blob: https:",
   "object-src 'none'",
