@@ -66,11 +66,49 @@ const frostedGlass = {
 
 
 export default function Navbar() {
+  const [dropdownItems, setDropdownItems] = useState(solutionDropdownItems);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSolutionsHovered, setIsSolutionsHovered] = useState(false);
   const [isMobileSolutionsOpen, setIsMobileSolutionsOpen] = useState(false);
   const pathname = usePathname();
   const headerRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchActiveIndustries() {
+      try {
+        const res = await fetch("/api/industries");
+
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0 && isMounted) {
+            const mapped = data.map((item: any) => {
+              const extra = item.extra_field || {};
+              return {
+                href: `/solutions/${item.slug}`,
+                title: extra.nav_title || item.title || item.heading || "Industry",
+                description:
+                  extra.nav_description ||
+                  item.subtitle ||
+                  extra.hero_description ||
+                  item.heading ||
+                  "Enterprise cybersecurity solutions tailored for your industry.",
+              };
+            });
+            setDropdownItems(mapped);
+          }
+        }
+      } catch (err) {
+        console.warn("Failed to fetch active industries for Navbar:", err);
+      }
+    }
+
+    fetchActiveIndustries();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -232,7 +270,7 @@ export default function Navbar() {
             className={`transition-all duration-300 ease-out pointer-events-auto ${isSolutionsHovered ? 'opacity-100 translate-y-0 delay-[80ms]' : 'opacity-0 -translate-y-2 delay-0'}`}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 lg:gap-x-12 gap-y-4 lg:gap-y-6 relative z-10">
-              {solutionDropdownItems.map((item) => (
+              {dropdownItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
@@ -300,7 +338,7 @@ export default function Navbar() {
                     className={`pl-4 flex flex-col gap-4 overflow-hidden transition-all duration-300 ease-in-out ${isMobileSolutionsOpen ? 'max-h-[1000px] opacity-100 mt-2' : 'max-h-0 opacity-0 mt-0'
                       }`}
                   >
-                    {solutionDropdownItems.map((item) => (
+                    {dropdownItems.map((item) => (
                       <Link
                         key={item.href}
                         href={item.href}

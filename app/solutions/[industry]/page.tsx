@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import HighlightedText from "@/components/global/HighlightedText";
-import { industriesData } from "./industryData";
+import { industriesData, getIndustryBySlug } from "./industryData";
 import SolutionButtons from "./SolutionButtons";
 import CenteredBookDemo from "./CenteredBookDemo";
 import HeroImageSlider from "./HeroImageSlider";
@@ -22,7 +22,7 @@ export async function generateMetadata({
     .replace(/\b\w/g, (c) => c.toUpperCase())
     .replace(/\bAnd\b/g, "and");
 
-  const data = industriesData[industryKey] || industriesData.healthcare;
+  const data = await getIndustryBySlug(industryKey);
   const title =
     typeof data.hero.title === "string"
       ? data.hero.title
@@ -80,9 +80,8 @@ export default async function IndustrySolutionPage({
     .replace(/\b\w/g, (c) => c.toUpperCase())
     .replace(/\bAnd\b/g, "and");
 
-  // Try to grab specific industry data, or fallback to the generic one (which currently defaults to Healthcare if missing, but we handle missing keys in the data file)
-  const data = industriesData[industryKey] || industriesData.healthcare;
-  console.log({ data });
+  // Fetch dynamic industry data with fallback
+  const data = await getIndustryBySlug(industryKey);
 
   // Product mapping based on industry needs
   const productLinks: Record<string, string> = {
@@ -140,7 +139,7 @@ export default async function IndustrySolutionPage({
       {/* Content Sections Wrapper */}
       <div className="bg-white py-16 md:py-24">
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-12 flex flex-col gap-20 md:gap-32">
-          {data.sections.map((section, index) => {
+          {(Array.isArray(data.sections) ? data.sections : []).map((section, index) => {
             // Alternate layout: Image Left on Even indexes (0, 2), Image Right on Odd indexes (1, 3)
             const isImageLeft = index % 2 === 0;
             const rowDirection = isImageLeft
@@ -161,12 +160,26 @@ export default async function IndustrySolutionPage({
                   />
                 </div>
                 <div className="flex-1 flex flex-col justify-start">
-                  <h2 className="text-3xl md:text-[26px]font-bold text-black leading-tight mb-10">
-                    {section.title}
-                  </h2>
-                  <p className="text-gray-700 text-[15px] md:text-[16px] leading-relaxed">
-                    {section.content}
-                  </p>
+                  {typeof section.title === "string" ? (
+                    <h2
+                      className="text-3xl md:text-[26px] font-bold text-black leading-tight mb-10"
+                      dangerouslySetInnerHTML={{ __html: section.title }}
+                    />
+                  ) : (
+                    <h2 className="text-3xl md:text-[26px] font-bold text-black leading-tight mb-10">
+                      {section.title}
+                    </h2>
+                  )}
+                  {typeof section.content === "string" ? (
+                    <div
+                      className="text-gray-700 text-[15px] md:text-[16px] leading-relaxed"
+                      dangerouslySetInnerHTML={{ __html: section.content }}
+                    />
+                  ) : (
+                    <p className="text-gray-700 text-[15px] md:text-[16px] leading-relaxed">
+                      {section.content}
+                    </p>
+                  )}
                 </div>
               </div>
             );

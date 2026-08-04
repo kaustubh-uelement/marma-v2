@@ -1159,3 +1159,66 @@ export const industriesData: Record<string, IndustryData> = {
     ],
   },
 };
+
+export async function getIndustryBySlug(slug: string): Promise<IndustryData> {
+  const fallback = industriesData[slug] || industriesData.healthcare;
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    const tenantSlug = process.env.NEXT_PUBLIC_TENANT_SLUG;
+
+    if (!tenantSlug) {
+      return fallback;
+    }
+
+    const res = await fetch(`${apiUrl}/api/v1/industries/active/${slug}`, {
+      headers: {
+        'x-tenant-slug': tenantSlug,
+      },
+      next: { revalidate: 60 }
+    });
+
+    if (!res.ok) {
+      return fallback;
+    }
+
+    const json = await res.json();
+    const data = json.data || json;
+
+    if (!data || !data.id) return fallback;
+
+    const extra = data.extra_field || {};
+
+    const parseJSON = (val: any) => {
+      if (typeof val === 'string') {
+        try {
+          return JSON.parse(val);
+        } catch {
+          return val;
+        }
+      }
+      return val;
+    };
+
+    const parsedSections = parseJSON(extra.sections) || parseJSON(data.use_cases);
+    const validSections = Array.isArray(parsedSections) && parsedSections.length > 0
+      ? parsedSections
+      : fallback.sections;
+
+    const rawImageSrc = parseJSON(extra.hero_imageSrc) || parseJSON(data.hero_image);
+    const validImageSrc = rawImageSrc || fallback.hero.imageSrc;
+
+    return {
+      hero: {
+        title: data.title || extra.hero_title || fallback.hero.title,
+        description: extra.hero_description || data.subtitle || data.content || fallback.hero.description,
+        imageSrc: validImageSrc,
+        buttonText: extra.hero_buttonText || fallback.hero.buttonText,
+      },
+      sections: validSections,
+    };
+  } catch (error) {
+    console.error(`Error fetching industry by slug (${slug}):`, error);
+    return fallback;
+  }
+}
+

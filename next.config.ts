@@ -37,6 +37,18 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "logo.clearbit.com",
       },
+      {
+        protocol: "https",
+        hostname: "dunytgqgpv9fu.cloudfront.net",
+      },
+      {
+        protocol: "https",
+        hostname: "*.cloudfront.net",
+      },
+      {
+        protocol: "https",
+        hostname: "*.amplifyapp.com",
+      },
     ],
   },
 

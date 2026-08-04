@@ -1,14 +1,34 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import { Globe } from "lucide-react";
 import {
   getPartners,
+  FALLBACK_PARTNERS,
   type RegionKey,
   type Partner,
 } from "@/lib/partnerData";
 import { PartnerLogo } from "./PartnerLogo";
 
-export default async function RegionalPartners() {
-  const partnersData = await getPartners();
+export default function RegionalPartners() {
+  const [partnersData, setPartnersData] = useState<Record<RegionKey, Partner[]>>(FALLBACK_PARTNERS);
+
+  useEffect(() => {
+    let isMounted = true;
+    getPartners()
+      .then((data) => {
+        if (isMounted && data) {
+          setPartnersData(data);
+        }
+      })
+      .catch((err) => {
+        console.warn("Failed to fetch partners, using fallback data:", err);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <section className="w-full bg-white flex flex-col items-center pt-16 lg:pt-24 pb-16 lg:pb-24 font-body overflow-hidden">
