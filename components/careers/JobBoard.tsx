@@ -1,118 +1,28 @@
 "use client";
 
 import React, { useState } from "react";
-import { ArrowUpRight, MapPin, Briefcase, Clock, CheckCircle2, ChevronUp } from "lucide-react";
-import Button from "../global/Button";
+import {
+  ArrowUpRight,
+  MapPin,
+  Briefcase,
+  Clock,
+  CheckCircle2,
+  ChevronUp,
+} from "lucide-react";
 import ApplicationForm from "./ApplicationForm";
+import type { Job, JobWithSubmitUrl } from "@/lib/careers";
 
-const jobs = [
-  {
-    id: 4,
-    isFilled: false,
-    title: "Sales Executive / Manager (2-5 Years)",
-    department: "Sales",
-    location: "Delhi, India",
-    type: "Full-time",
-    description: "Join our fast-growing product company to drive B2B and B2C sales for Marma Security products. We're looking for a motivated individual to build our partner ecosystem and own customer acquisition.",
-    requirements: [
-      "2–5 years of experience in Sales / Business Development",
-      "Proven ability to drive revenue and manage customer relationships",
-      "Strong networking and channel partner management skills",
-      "Excellent communication and strategic thinking"
-    ],
-    goodToHave: [
-      "Exposure to the Cyber Security domain"
-    ],
-    responsibilities: [
-      "Drive B2B & B2C sales for Marma Security products",
-      "Build and scale a strong channel partner ecosystem",
-      "Own revenue targets and customer acquisition",
-      "Work closely with leadership in a fast-growing product company"
-    ]
-  },
-  {
-    id: 3,
-    isFilled: false,
-    title: "Sales Executive / Manager (2-5 Years)",
-    department: "Sales",
-    location: "Kolkata, India",
-    type: "Full-time",
-    description: "Join our fast-growing product company to drive B2B and B2C sales for Marma Security products. We're looking for a motivated individual to build our partner ecosystem and own customer acquisition.",
-    requirements: [
-      "2–5 years of experience in Sales / Business Development",
-      "Proven ability to drive revenue and manage customer relationships",
-      "Strong networking and channel partner management skills",
-      "Excellent communication and strategic thinking"
-    ],
-    goodToHave: [
-      "Exposure to the Cyber Security domain"
-    ],
-    responsibilities: [
-      "Drive B2B & B2C sales for Marma Security products",
-      "Build and scale a strong channel partner ecosystem",
-      "Own revenue targets and customer acquisition",
-      "Work closely with leadership in a fast-growing product company"
-    ]
-  },
-  {
-    id: 2,
-    isFilled: true,
-    title: "Sales Executive / Manager (2-5 Years)",
-    department: "Sales",
-    location: "Mumbai, India",
-    type: "Full-time",
-    description: "Join our fast-growing product company to drive B2B and B2C sales for Marma Security products. We're looking for a motivated individual to build our partner ecosystem and own customer acquisition.",
-    requirements: [
-      "2–5 years of experience in Sales / Business Development",
-      "Proven ability to drive revenue and manage customer relationships",
-      "Strong networking and channel partner management skills",
-      "Excellent communication and strategic thinking"
-    ],
-    goodToHave: [
-      "Exposure to the Cyber Security domain"
-    ],
-    responsibilities: [
-      "Drive B2B & B2C sales for Marma Security products",
-      "Build and scale a strong channel partner ecosystem",
-      "Own revenue targets and customer acquisition",
-      "Work closely with leadership in a fast-growing product company"
-    ]
-  },
-  {
-    id: 1,
-    isFilled: true,
-    title: "Digital Marketing Executive (1-3 Years)",
-    department: "Marketing",
-    location: "Pune, India",
-    type: "Full-time",
-    description: "Looking to grow in a fast-paced cybersecurity product company? This could be your next big move. We are looking for a creative and data-driven marketer to drive our growth initiatives.",
-    requirements: [
-      "1–3 years of experience in Digital Marketing",
-      "Hands-on experience with Google Ads, SEO, LinkedIn, and Analytics",
-      "Strong interest in performance marketing & lead generation",
-      "Excellent written and verbal communication skills"
-    ],
-    goodToHave: [
-      "Exposure to Cybersecurity / SaaS / Product-based companies"
-    ],
-    responsibilities: [
-      "Experiment with and scale marketing campaigns",
-      "Drive high-quality lead generation",
-      "Work closely with tech and product teams to refine messaging",
-      "Analyze and report on campaign performance"
-    ]
-  },
-];
+interface JobBoardProps {
+  jobs: JobWithSubmitUrl[];
+}
 
-export default function JobBoard() {
-  const [expandedJobId, setExpandedJobId] = useState<number | null>(null);
+export default function JobBoard({ jobs }: JobBoardProps) {
+  const [expandedJobId, setExpandedJobId] = useState<string | number | null>(
+    null,
+  );
 
-  const toggleJobExpanded = (id: number) => {
-    if (expandedJobId === id) {
-      setExpandedJobId(null);
-    } else {
-      setExpandedJobId(id);
-    }
+  const toggleJobExpanded = (id: string | number) => {
+    setExpandedJobId((prev) => (prev === id ? null : id));
   };
 
   return (
@@ -124,7 +34,8 @@ export default function JobBoard() {
               Open <span className="text-brand-red">Positions</span>
             </h2>
             <p className="font-title text-[18px] text-[#64748B] max-w-[600px]">
-              Explore our current openings and find your place in the future of cybersecurity.
+              Explore our current openings and find your place in the future of
+              cybersecurity.
             </p>
           </div>
           <div className="flex items-center gap-4 text-brand-red font-title font-medium">
@@ -141,9 +52,12 @@ export default function JobBoard() {
             return (
               <div
                 key={job.id}
-                className={`group relative bg-white border ${isExpanded ? 'border-brand-red shadow-xl' : 'border-[#E2E8F0] hover:border-brand-red/30 hover:shadow-xl hover:-translate-y-1'} rounded-[24px] p-6 md:p-8 transition-all duration-300 overflow-hidden`}
+                className={`group relative bg-white border ${isExpanded ? "border-brand-red shadow-xl" : "border-[#E2E8F0] hover:border-brand-red/30 hover:shadow-xl hover:-translate-y-1"} rounded-[24px] p-6 md:p-8 transition-all duration-300 overflow-hidden`}
               >
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 cursor-pointer" onClick={() => toggleJobExpanded(job.id)}>
+                <div
+                  className="flex flex-col md:flex-row md:items-center justify-between gap-6 cursor-pointer"
+                  onClick={() => toggleJobExpanded(job.id)}
+                >
                   <div className="flex flex-col gap-3">
                     <div className="flex items-center gap-3">
                       <span className="bg-brand-red/10 text-brand-red text-[12px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
@@ -164,7 +78,8 @@ export default function JobBoard() {
                     </h3>
                     <div className="flex items-center gap-4 text-[#64748B] text-[16px]">
                       <span className="flex items-center gap-1.5">
-                        <MapPin className="w-4 h-4 text-brand-red" /> {job.location}
+                        <MapPin className="w-4 h-4 text-brand-red" />{" "}
+                        {job.location}
                       </span>
                     </div>
                   </div>
@@ -174,16 +89,20 @@ export default function JobBoard() {
                         e.stopPropagation();
                         toggleJobExpanded(job.id);
                       }}
-                      className={`flex items-center gap-2 px-6 py-3 rounded-xl font-title font-medium transition-all duration-300 ${isExpanded ? 'bg-[#F1F5F9] text-[#64748B] hover:bg-[#E2E8F0]' : 'bg-brand-red text-white hover:bg-brand-red-hover hover:shadow-lg hover:gap-3 group-hover:translate-x-0'}`}
+                      className={`flex items-center gap-2 px-6 py-3 rounded-xl font-title font-medium transition-all duration-300 ${isExpanded ? "bg-[#F1F5F9] text-[#64748B] hover:bg-[#E2E8F0]" : "bg-brand-red text-white hover:bg-brand-red-hover hover:shadow-lg hover:gap-3 group-hover:translate-x-0"}`}
                     >
                       {isExpanded ? (
-                        <>Close Details <ChevronUp className="w-5 h-5" /></>
+                        <>
+                          Close Details <ChevronUp className="w-5 h-5" />
+                        </>
+                      ) : job.isFilled ? (
+                        <>
+                          Position Filled <CheckCircle2 className="w-5 h-5" />
+                        </>
                       ) : (
-                        job.isFilled ? (
-                          <>Position Filled <CheckCircle2 className="w-5 h-5" /></>
-                        ) : (
-                          <>Apply Now <ArrowUpRight className="w-5 h-5" /></>
-                        )
+                        <>
+                          Apply Now <ArrowUpRight className="w-5 h-5" />
+                        </>
                       )}
                     </button>
                   </div>
@@ -191,7 +110,7 @@ export default function JobBoard() {
 
                 {/* Expanded Details */}
                 <div
-                  className={`grid transition-[grid-template-rows,opacity,margin,padding,border] duration-500 ease-in-out ${isExpanded ? 'grid-rows-[1fr] opacity-100 mt-8 pt-8 border-t border-[#E2E8F0]' : 'grid-rows-[0fr] opacity-0 mt-0 pt-0 border-t-0'}`}
+                  className={`grid transition-[grid-template-rows,opacity,margin,padding,border] duration-500 ease-in-out ${isExpanded ? "grid-rows-[1fr] opacity-100 mt-8 pt-8 border-t border-[#E2E8F0]" : "grid-rows-[0fr] opacity-0 mt-0 pt-0 border-t-0"}`}
                 >
                   <div className="overflow-hidden">
                     <div className="flex flex-col lg:flex-row gap-12">
@@ -199,7 +118,9 @@ export default function JobBoard() {
                       <div className="flex-1 flex flex-col gap-8">
                         {/* Description */}
                         <div className="flex flex-col gap-3">
-                          <h4 className="font-banner text-[22px] text-[#1E293B]">About the Role</h4>
+                          <h4 className="font-banner text-[22px] text-[#1E293B]">
+                            About the Role
+                          </h4>
                           <p className="font-title text-[16px] text-[#64748B] leading-relaxed">
                             {job.description}
                           </p>
@@ -207,39 +128,64 @@ export default function JobBoard() {
 
                         {/* Responsibilities */}
                         <div className="flex flex-col gap-3">
-                          <h4 className="font-banner text-[22px] text-[#1E293B]">Key Responsibilities</h4>
+                          <h4 className="font-banner text-[22px] text-[#1E293B]">
+                            Key Responsibilities
+                          </h4>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {job.responsibilities?.map((item: string, i: number) => (
-                              <div key={i} className="flex gap-3 bg-[#F8FAFC] p-4 rounded-xl border border-[#F1F5F9] hover:border-brand-red/10 transition-colors">
-                                <CheckCircle2 className="w-5 h-5 text-brand-red shrink-0 mt-0.5" />
-                                <span className="text-[#475569] leading-relaxed text-[15px]">{item}</span>
-                              </div>
-                            ))}
+                            {job.responsibilities?.map(
+                              (item: string, i: number) => (
+                                <div
+                                  key={i}
+                                  className="flex gap-3 bg-[#F8FAFC] p-4 rounded-xl border border-[#F1F5F9] hover:border-brand-red/10 transition-colors"
+                                >
+                                  <CheckCircle2 className="w-5 h-5 text-brand-red shrink-0 mt-0.5" />
+                                  <span className="text-[#475569] leading-relaxed text-[15px]">
+                                    {item}
+                                  </span>
+                                </div>
+                              ),
+                            )}
                           </div>
                         </div>
 
                         {/* Requirements */}
                         <div className="flex flex-col gap-3">
-                          <h4 className="font-banner text-[22px] text-[#1E293B]">Requirements</h4>
+                          <h4 className="font-banner text-[22px] text-[#1E293B]">
+                            Requirements
+                          </h4>
                           <ul className="flex flex-col gap-3">
-                            {job.requirements?.map((item: string, i: number) => (
-                              <li key={i} className="flex items-start gap-3 text-[#475569] text-[15px]">
-                                <div className="w-1.5 h-1.5 rounded-full bg-brand-red mt-2 shrink-0" />
-                                <span className="leading-relaxed">{item}</span>
-                              </li>
-                            ))}
+                            {job.requirements?.map(
+                              (item: string, i: number) => (
+                                <li
+                                  key={i}
+                                  className="flex items-start gap-3 text-[#475569] text-[15px]"
+                                >
+                                  <div className="w-1.5 h-1.5 rounded-full bg-brand-red mt-2 shrink-0" />
+                                  <span className="leading-relaxed">
+                                    {item}
+                                  </span>
+                                </li>
+                              ),
+                            )}
                           </ul>
                         </div>
 
                         {/* Good to have */}
                         {job.goodToHave && (
                           <div className="flex flex-col gap-3">
-                            <h4 className="font-banner text-[22px] text-[#1E293B]">Good to Have</h4>
+                            <h4 className="font-banner text-[22px] text-[#1E293B]">
+                              Good to Have
+                            </h4>
                             <ul className="flex flex-col gap-3">
                               {job.goodToHave.map((item: string, i: number) => (
-                                <li key={i} className="flex items-start gap-3 text-[#475569] text-[15px]">
+                                <li
+                                  key={i}
+                                  className="flex items-start gap-3 text-[#475569] text-[15px]"
+                                >
                                   <div className="w-1.5 h-1.5 rounded-full bg-brand-red/40 mt-2 shrink-0" />
-                                  <span className="leading-relaxed italic">{item}</span>
+                                  <span className="leading-relaxed italic">
+                                    {item}
+                                  </span>
                                 </li>
                               ))}
                             </ul>
@@ -251,12 +197,16 @@ export default function JobBoard() {
                       <div className="w-full lg:w-[650px] shrink-0">
                         <div className="bg-[#F8FAFC] p-6 lg:p-8 rounded-2xl border border-[#E2E8F0] sticky top-6">
                           <div className="mb-6">
-                            <h3 className="font-banner text-[24px] text-[#1E293B] mb-2">Submit Application</h3>
-                            <p className="text-[#64748B] text-[15px]">Applying for {job.title}</p>
+                            <h3 className="font-banner text-[24px] text-[#1E293B] mb-2">
+                              Submit Application
+                            </h3>
+                            <p className="text-[#64748B] text-[15px]">
+                              Applying for {job.title}
+                            </p>
                           </div>
                           <ApplicationForm
                             job={job}
-                            onSuccess={() => { }}
+                            onSuccess={() => {}}
                             isFilled={job.isFilled}
                           />
                         </div>

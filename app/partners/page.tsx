@@ -1,26 +1,14 @@
-"use client";
-
-import React, { useState } from "react";
 import Link from "next/link";
 import HighlightedText from "@/components/global/HighlightedText";
 import PartneringMadeEasy from "@/components/partners/PartneringMadeEasy";
 import PartnerBenefits from "@/components/partners/PartnerBenefits";
-import SimplifyLife from "@/components/partners/SimplifyLife";
-import PartnersBottomBanner from "@/components/partners/PartnersBottomBanner";
 import RegionalPartners from "@/components/partners/RegionalPartners";
-import Button from "@/components/global/Button";
-import ContactModal from "@/components/contact/ContactModal";
 import DecorativeLine from "@/components/home/DecorativeLine";
+import PartnersHeroActions from "@/components/partners/PartnersHeroActions";
 
 export default function PartnersPage() {
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const toggleModal = () => setIsModalOpen(!isModalOpen);
-
   return (
     <main className="w-full flex-grow flex flex-col items-center">
-      {/* Centered Hero Banner (Similar to TechnologyBanner) */}
-
       <section
         className="relative w-full min-h-[100vh] flex flex-col overflow-x-clip"
         style={{
@@ -30,11 +18,8 @@ export default function PartnersPage() {
           backgroundRepeat: "no-repeat",
         }}
       >
-        {/* Main Content Container — fills entire banner height */}
         <div className="relative z-10 w-full flex-1 px-6 lg:px-16 flex flex-col items-center text-center pt-28 md:pt-40">
-          {/* Title + Subtitle group — sits near the top-center */}
           <div className="flex flex-col space-y-6 lg:space-y-8 items-center max-w-[900px] mt-10 md:mt-20">
-            {/* Title text */}
             <h1 className="fl1 text-white!">
               MSP, MSSP and ITSP{" "}
               <HighlightedText
@@ -43,8 +28,6 @@ export default function PartnersPage() {
                 imageClassName="bottom-[-20px] md:bottom-[-20px] right-[-5px]"
               />
             </h1>
-
-            {/* Subtitle */}
             <p className="partners-banner-subtitle max-w-[900px] mx-auto mt-4">
               Marma Security operates a comprehensive partner program designed
               to extend reach and enhance service delivery. Our ecosystem
@@ -54,15 +37,8 @@ export default function PartnersPage() {
             </p>
           </div>
 
-          {/* Buttons — vertically centered in the remaining space below subtitle */}
-          <div className="flex-1 flex items-center">
-            <div className="flex flex-row items-center justify-center gap-4 sm:gap-6 w-full ">
-              {/* Get Started Button */}
-              <Link href="#" className="w-full sm:w-auto">
-                <Button onClick={toggleModal} icon label="Get Started" className="w-full sm:w-auto whitespace-nowrap" />
-              </Link>
-            </div>
-          </div>
+          {/* Only this needs client interactivity */}
+          <PartnersHeroActions />
         </div>
       </section>
 
@@ -84,15 +60,16 @@ export default function PartnersPage() {
           animationDuration={3}
         />
       </div>
+
       <RegionalPartners />
       <PartneringMadeEasy />
       <PartnerBenefits />
 
       <div className="fl3 text-bold max-w-[1200px] text-center mx-auto pb-8">
-        Join the Marma Security Partner Program to gain access to
-        comprehensive training,<br />  enablement, and co-marketing support.
+        Join the Marma Security Partner Program to gain access to comprehensive
+        training,
+        <br /> enablement, and co-marketing support.
       </div>
-      <ContactModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </main>
   );
 }
