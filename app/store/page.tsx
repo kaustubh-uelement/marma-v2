@@ -3,61 +3,57 @@ import StoreBanner from "@/components/store/StoreBanner";
 import HighlightedText from "@/components/global/HighlightedText";
 import DecorativeLine from "@/components/home/DecorativeLine";
 import ProductCard from "@/components/store/ProductCard";
-import { fetchApi } from "@/lib/api";
+import { getProducts, Product } from "@/lib/productsData";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default async function StorePage() {
-  let products: any[] = [];
-  try {
-    const response = await fetchApi('/api/v1/products/active', {
-      cache: 'no-store'
-    });
+  const products = await getProducts();
 
-    if (response.ok) {
-      const data = await response.json();
-      products = Array.isArray(data) ? data : (data?.data || []);
-    } else {
-      console.error('Failed to fetch products. Status:', response.status);
+  const enterpriseProducts = products.filter((p: Product) => {
+    const cat = p.category?.toLowerCase() || "";
+    return cat.includes("enterprise");
+  });
+
+  const smbProducts = products.filter((p: Product) => {
+    const cat = p.category?.toLowerCase() || "";
+    return cat.includes("smb");
+  });
+
+  const homeProducts = products.filter((p: Product) => {
+    const cat = p.category?.toLowerCase() || "";
+    return cat.includes("home");
+  });
+
+  const csProducts = products.filter((p: Product) => {
+    const cat = p.category?.toLowerCase() || "";
+    return cat.includes("cs-solutions");
+  });
+
+  // Group any other categories (e.g. "Ai-drive", "Edge AI", custom modules)
+  const otherProducts = products.filter((p: Product) => {
+    const cat = p.category?.toLowerCase() || "";
+    return (
+      !cat.includes("enterprise") &&
+      !cat.includes("smb") &&
+      !cat.includes("home") &&
+      !cat.includes("cs-solutions")
+    );
+  });
+
+  const otherGrouped: Record<string, Product[]> = {};
+  for (const p of otherProducts) {
+    const catKey = p.category || "Other Solutions";
+    if (!otherGrouped[catKey]) {
+      otherGrouped[catKey] = [];
     }
-  } catch (error) {
-    console.error('Error fetching products:', error);
+    otherGrouped[catKey].push(p);
   }
 
-  // Fallback products if API returns empty
-  const defaultProducts = [
-    { id: "safeenterprise-400", name: "SafeEnterprise 400", category: "enterprise", image: "/images/product/SafeEnterprise4001.webp" },
-    { id: "safeenterprise-200", name: "SafeEnterprise 200", category: "enterprise", image: "/images/product/SafeEnterprise2001.webp" },
-    { id: "saferemote", name: "SafeEnterprise 100", category: "enterprise", image: "/images/product/Frame 209.webp" },
-    { id: "safebiz", name: "SafeBiz", category: "smb", image: "/images/banners/homepage-right-banner1.webp" },
-    { id: "safehome", name: "SafeHome", category: "home", image: "/images/banners/solution-banner-right1.webp" }
-  ];
-
-  const productsList = products.length > 0 ? products : defaultProducts;
-
-  const enterpriseProducts = productsList.filter((p: any) => {
-    const cat = p.category?.toLowerCase() || '';
-    return cat.includes('enterprise');
-  });
-
-  const smbProducts = productsList.filter((p: any) => {
-    const cat = p.category?.toLowerCase() || '';
-    return cat.includes('smb');
-  });
-
-  const homeProducts = productsList.filter((p: any) => {
-    const cat = p.category?.toLowerCase() || '';
-    return cat.includes('home');
-  });
-
-  const csProducts = productsList.filter((p: any) => {
-    const cat = p.category?.toLowerCase() || '';
-    return cat.includes('cs-solutions');
-  });
-
-  const buildHref = (product: any) => {
-    const slug = (product.name || product.title || product.id || "product").toLowerCase().replace(/ /g, '-');
-    // We pass minimal required data to avoid huge URLs
+  const buildHref = (product: Product) => {
+    const slug = (product.slug || product.name || product.id || "product")
+      .toLowerCase()
+      .replace(/ /g, "-");
     const data = {
       id: product.id,
       name: product.name || product.title,
@@ -68,13 +64,15 @@ export default async function StorePage() {
       images: product.images,
       inStock: product.inStock,
     };
-    const encoded = encodeURIComponent(Buffer.from(JSON.stringify(data)).toString('base64'));
+    const encoded = encodeURIComponent(
+      Buffer.from(JSON.stringify(data)).toString("base64")
+    );
     return `/store/${slug}?data=${encoded}`;
   };
 
   return (
     <main className="flex flex-col bg-white min-h-screen overflow-x-hidden">
-      <div className="">
+      <div>
         <StoreBanner
           title={
             <>
@@ -112,12 +110,10 @@ export default async function StorePage() {
         </div>
         <div className="flex flex-col lg:flex-row justify-between items-start mb-16 relative">
           <div className="z-10 bg-white pr-4">
-            {/* <h2 className="font-bold text-black text-xl lg:text-2xl mb-1">New</h2> */}
             <h2 className="font-bold text-black text-xl lg:text-2xl">
               Order Marma Security Products
             </h2>
           </div>
-
         </div>
 
         {/* Enterprise Solutions */}
@@ -126,9 +122,15 @@ export default async function StorePage() {
             <h3 className="text-xl lg:text-2xl font-semibold text-[#999999] mb-8">
               Enterprise Solutions
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-0">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-2">
               {enterpriseProducts.map((product, index) => (
-                <ProductCard key={product.id || index} name={product.name || product.title} image={product.image || "/images/product/SafeEnterprise4001.webp"} href={buildHref(product)} inStock={product.inStock} />
+                <ProductCard
+                  key={product.id || index}
+                  name={product.name || product.title || "Product"}
+                  image={product.image}
+                  href={buildHref(product)}
+                  inStock={product.inStock}
+                />
               ))}
             </div>
           </section>
@@ -142,7 +144,13 @@ export default async function StorePage() {
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-2">
               {smbProducts.map((product, index) => (
-                <ProductCard key={product.id || index} name={product.name || product.title} image={product.image || "/images/product/SafeEnterprise4001.webp"} href={buildHref(product)} inStock={product.inStock} />
+                <ProductCard
+                  key={product.id || index}
+                  name={product.name || product.title || "Product"}
+                  image={product.image}
+                  href={buildHref(product)}
+                  inStock={product.inStock}
+                />
               ))}
             </div>
           </section>
@@ -156,7 +164,13 @@ export default async function StorePage() {
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-2">
               {homeProducts.map((product, index) => (
-                <ProductCard key={product.id || index} name={product.name || product.title} image={product.image || "/images/product/SafeEnterprise4001.webp"} href={buildHref(product)} inStock={product.inStock} />
+                <ProductCard
+                  key={product.id || index}
+                  name={product.name || product.title || "Product"}
+                  image={product.image}
+                  href={buildHref(product)}
+                  inStock={product.inStock}
+                />
               ))}
             </div>
           </section>
@@ -170,15 +184,38 @@ export default async function StorePage() {
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-2">
               {csProducts.map((product, index) => (
-                <ProductCard key={product.id || index} name={product.name || product.title} image={product.image || "/images/product/SafeEnterprise4001.webp"} href={buildHref(product)} inStock={product.inStock} />
+                <ProductCard
+                  key={product.id || index}
+                  name={product.name || product.title || "Product"}
+                  image={product.image}
+                  href={buildHref(product)}
+                  inStock={product.inStock}
+                />
               ))}
             </div>
           </section>
         )}
 
+        {/* Additional Categories from API (e.g. "Ai-drive", "AI Solutions") */}
+        {Object.entries(otherGrouped).map(([categoryName, groupProducts]) => (
+          <section key={categoryName} className="mb-16">
+            <h3 className="text-xl lg:text-2xl font-semibold text-[#999999] mb-8 capitalize">
+              {categoryName.replace(/-/g, " ")}
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-2">
+              {groupProducts.map((product, index) => (
+                <ProductCard
+                  key={product.id || index}
+                  name={product.name || product.title || "Product"}
+                  image={product.image}
+                  href={buildHref(product)}
+                  inStock={product.inStock}
+                />
+              ))}
+            </div>
+          </section>
+        ))}
       </div>
     </main>
   );
 }
-
-

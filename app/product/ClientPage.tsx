@@ -509,23 +509,40 @@ export default function ClientPage({ products }: { products: any }) {
       </div>
 
       {/* Product Showcases */}
-      <div className=" pt-20">
-        <div className="mb-10">
-          <Tabs
-            tabs={[
-              { label: "Enterprise Solutions", id: "enterprise" },
-              { label: "SMB Solutions", id: "smb" },
-              { label: "Home Solutions", id: "home" },
-            ]}
-            activeTabId={activeProductTab}
-            onTabChange={onTabChange}
-            align="left"
-          />
-        </div>
-        <div className="mb-4 mx-2">
-          <ActiveComponent products={products} />
-        </div>
-      </div>
+      {(() => {
+        const hasAiProducts =
+          Array.isArray(products) &&
+          products.some(
+            (p: any) =>
+              p.isAi === true ||
+              (p.category || "").toLowerCase().includes("ai")
+          );
+
+        const availableTabs = [
+          { label: "Enterprise Solutions", id: "enterprise" },
+          { label: "SMB Solutions", id: "smb" },
+          { label: "Home Solutions", id: "home" },
+          ...(hasAiProducts
+            ? [{ label: "AI & Edge Solutions", id: "ai-drive" }]
+            : []),
+        ];
+
+        return (
+          <div className=" pt-20">
+            <div className="mb-10">
+              <Tabs
+                tabs={availableTabs}
+                activeTabId={activeProductTab}
+                onTabChange={onTabChange}
+                align="left"
+              />
+            </div>
+            <div className="mb-4 mx-2">
+              <ActiveComponent products={products} />
+            </div>
+          </div>
+        );
+      })()}
 
       <div className=" pt-12 mx-auto w-full max-w-[1280px]">
         <div className="flex flex-col w-[50%] sm:w-[40%] min-[901px]:w-[40%] ml-auto pointer-events-none z-0">
