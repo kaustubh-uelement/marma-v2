@@ -55,7 +55,13 @@ export default function SMBSoluations({ products = [] }: { products?: any[] }) {
     return cat === 'smb' || cat === 'smbsoluations' || cat === 'smb-solutions';
   });
 
-  const displayProducts = deviceProducts.length > 0 ? deviceProducts : fallbackProducts;
+  const isBackup = products.some((p: any) => p.isBackup === true);
+  const displayProducts =
+    deviceProducts.length > 0
+      ? deviceProducts
+      : isBackup
+      ? fallbackProducts
+      : [];
 
   return (
     <>

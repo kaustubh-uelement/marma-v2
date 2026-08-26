@@ -67,9 +67,9 @@ export default function EndpointProductCard({
           <p className="fl5-1">
             Features
           </p>
-          <p className="fl4-1">
+          <div className="fl4-1">
             {primaryFeature}
-          </p>
+          </div>
           {features.length > 0 && (
             <ul className="flex flex-col gap-1.5 mt-2">
               {features.map((feature, i) => (

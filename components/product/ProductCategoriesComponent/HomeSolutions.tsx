@@ -42,7 +42,13 @@ export default function HomeSolutions({ products = [] }: { products?: any[] }) {
     return cat === 'home' || cat === 'homesolutions' || cat === 'home-solutions';
   });
 
-  const displayProducts = deviceProducts.length > 0 ? deviceProducts : fallbackProducts;
+  const isBackup = products.some((p: any) => p.isBackup === true);
+  const displayProducts =
+    deviceProducts.length > 0
+      ? deviceProducts
+      : isBackup
+      ? fallbackProducts
+      : [];
 
   return (
     <div className="mx-auto w-full max-w-[1280px]">

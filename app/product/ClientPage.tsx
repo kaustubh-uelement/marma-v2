@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -96,30 +96,35 @@ const CARD_WIDTH = 260;
 const CARD_HEIGHT = 300;
 
 // ── HeroCarousel ──────────────────────────────────────────────────────────────
-function HeroCarousel() {
+function HeroCarousel({ items }: { items?: any[] }) {
   const router = useRouter();
+  const list = items && items.length > 0 ? items : heroProducts;
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const total = heroProducts.length;
+  const total = list.length;
 
   const next = useCallback(
-    () => setCurrent((prev) => (prev + 1) % total),
+    () => setCurrent((prev) => (total > 1 ? (prev + 1) % total : 0)),
     [total],
   );
 
   useEffect(() => {
-    if (paused) return;
+    if (paused || total <= 1) return;
     const timer = setInterval(next, 1800);
     return () => clearInterval(timer);
-  }, [next, paused]);
+  }, [next, paused, total]);
 
   useGSAP(
     () => {
-      heroProducts.forEach((_, i) => {
+      list.forEach((_, i) => {
         let offset = i - current;
-        if (offset > total / 2) offset -= total;
-        if (offset < -total / 2) offset += total;
+        if (total > 1) {
+          if (offset > total / 2) offset -= total;
+          if (offset < -total / 2) offset += total;
+        } else {
+          offset = 0;
+        }
 
         const { x, scale, opacity, zIndex } = getCardProps(offset);
         const card = containerRef.current?.querySelector(`.card-${i}`);
@@ -137,7 +142,7 @@ function HeroCarousel() {
         }
       });
     },
-    { dependencies: [current], scope: containerRef },
+    { dependencies: [current, list], scope: containerRef },
   );
 
   return (
@@ -147,7 +152,7 @@ function HeroCarousel() {
     >
       <div className="absolute inset-0 overflow-hidden rounded-xl pointer-events-none" />
 
-      {heroProducts.map((product, i) => {
+      {list.map((product, i) => {
         let offset = i - current;
         if (offset > total / 2) offset -= total;
         if (offset < -total / 2) offset += total;
@@ -323,24 +328,92 @@ function HeroCarousel() {
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function ClientPage({ products }: { products: any }) {
-
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab");
   const productParam = searchParams.get("product");
 
+  const isBackupData =
+    !Array.isArray(products) ||
+    products.length === 0 ||
+    products.every((p: any) => p.isBackup === true);
+
+  const hasEnterprise =
+    Array.isArray(products) &&
+    products.some((p: any) =>
+      (p.category || "").toLowerCase().includes("enterprise")
+    );
+  const hasSmb =
+    Array.isArray(products) &&
+    products.some((p: any) => (p.category || "").toLowerCase().includes("smb"));
+  const hasHome =
+    Array.isArray(products) &&
+    products.some((p: any) => (p.category || "").toLowerCase().includes("home"));
+  const hasAi =
+    Array.isArray(products) &&
+    products.some(
+      (p: any) =>
+        p.isAi === true || (p.category || "").toLowerCase().includes("ai")
+    );
+
+  const availableTabs = useMemo(() => {
+    if (isBackupData) {
+      return [
+        { label: "Enterprise Solutions", id: "enterprise" as const },
+        { label: "SMB Solutions", id: "smb" as const },
+        { label: "Home Solutions", id: "home" as const },
+      ];
+    }
+    const tabs: { label: string; id: keyof typeof ProductCategoriesMapping }[] = [];
+    if (hasEnterprise) tabs.push({ label: "Enterprise Solutions", id: "enterprise" });
+    if (hasSmb) tabs.push({ label: "SMB Solutions", id: "smb" });
+    if (hasHome) tabs.push({ label: "Home Solutions", id: "home" });
+    if (hasAi) tabs.push({ label: "AI & Edge Solutions", id: "ai-drive" });
+
+    if (tabs.length === 0) {
+      tabs.push({ label: "AI & Edge Solutions", id: "ai-drive" });
+    }
+    return tabs;
+  }, [isBackupData, hasEnterprise, hasSmb, hasHome, hasAi]);
+
+  const defaultTab = availableTabs[0]?.id || "enterprise";
+
   const [activeProductTab, setActiveProductTab] = useState<
     keyof typeof ProductCategoriesMapping
   >(
-    (tabParam && tabParam in ProductCategoriesMapping
+    (tabParam && availableTabs.some((t) => t.id === tabParam)
       ? tabParam
-      : "enterprise") as keyof typeof ProductCategoriesMapping,
+      : defaultTab) as keyof typeof ProductCategoriesMapping
   );
 
   useEffect(() => {
-    if (tabParam && tabParam in ProductCategoriesMapping) {
+    if (tabParam && availableTabs.some((t) => t.id === tabParam)) {
       setActiveProductTab(tabParam as keyof typeof ProductCategoriesMapping);
+    } else if (!availableTabs.some((t) => t.id === activeProductTab)) {
+      setActiveProductTab(defaultTab as keyof typeof ProductCategoriesMapping);
     }
-  }, [tabParam]);
+  }, [tabParam, availableTabs, activeProductTab, defaultTab]);
+
+  const displayHeroProducts = useMemo(() => {
+    if (isBackupData) {
+      return heroProducts;
+    }
+    return products.map((p: any) => {
+      const cat = (p.category || "").toLowerCase();
+      let tabId = "ai-drive";
+      if (cat.includes("enterprise")) tabId = "enterprise";
+      else if (cat.includes("smb")) tabId = "smb";
+      else if (cat.includes("home")) tabId = "home";
+
+      return {
+        id: p.id,
+        href: `?tab=${tabId}&product=${p.id}`,
+        label: p.name || p.title || "Product",
+        isEnterprise: tabId === "enterprise",
+        image: p.image || "/images/marma-dashboard/enterprise_protection.webp",
+        alt: p.name || p.title || "Product",
+      };
+    });
+  }, [isBackupData, products]);
 
   useEffect(() => {
     if (!productParam) return;
@@ -483,7 +556,7 @@ export default function ClientPage({ products }: { products: any }) {
             </>
           }
           subtitleClassName="font-title font-light text-[18px] md:text-[24px] leading-[1.4] md:leading-[34px] tracking-[-0.01em] text-white max-w-[550px]"
-          rightContent={<HeroCarousel />}
+          rightContent={<HeroCarousel items={displayHeroProducts} />}
         />
 
         {/* Decorative */}
@@ -509,40 +582,19 @@ export default function ClientPage({ products }: { products: any }) {
       </div>
 
       {/* Product Showcases */}
-      {(() => {
-        const hasAiProducts =
-          Array.isArray(products) &&
-          products.some(
-            (p: any) =>
-              p.isAi === true ||
-              (p.category || "").toLowerCase().includes("ai")
-          );
-
-        const availableTabs = [
-          { label: "Enterprise Solutions", id: "enterprise" },
-          { label: "SMB Solutions", id: "smb" },
-          { label: "Home Solutions", id: "home" },
-          ...(hasAiProducts
-            ? [{ label: "AI & Edge Solutions", id: "ai-drive" }]
-            : []),
-        ];
-
-        return (
-          <div className=" pt-20">
-            <div className="mb-10">
-              <Tabs
-                tabs={availableTabs}
-                activeTabId={activeProductTab}
-                onTabChange={onTabChange}
-                align="left"
-              />
-            </div>
-            <div className="mb-4 mx-2">
-              <ActiveComponent products={products} />
-            </div>
-          </div>
-        );
-      })()}
+      <div className=" pt-20">
+        <div className="mb-10">
+          <Tabs
+            tabs={availableTabs}
+            activeTabId={activeProductTab}
+            onTabChange={onTabChange}
+            align="left"
+          />
+        </div>
+        <div className="mb-4 mx-2">
+          {ActiveComponent && <ActiveComponent products={products} />}
+        </div>
+      </div>
 
       <div className=" pt-12 mx-auto w-full max-w-[1280px]">
         <div className="flex flex-col w-[50%] sm:w-[40%] min-[901px]:w-[40%] ml-auto pointer-events-none z-0">
@@ -555,11 +607,13 @@ export default function ClientPage({ products }: { products: any }) {
             animationDuration={2.5}
           />
         </div>
-        <ProductSummaryTable
-          title="Product Summary"
-          columns={columns}
-          rows={rows}
-        />
+        {isBackupData && (
+          <ProductSummaryTable
+            title="Product Summary"
+            columns={columns}
+            rows={rows}
+          />
+        )}
       </div>
     </main>
   );

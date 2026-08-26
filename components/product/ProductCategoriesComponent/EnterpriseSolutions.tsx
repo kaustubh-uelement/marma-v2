@@ -86,7 +86,13 @@ export default function EnterpriseSolutions({ products = [] }: { products?: any[
     return cat === 'enterprise' || cat === 'enterprisesolutions' || cat === 'enterprise-solutions';
   });
 
-  const displayProducts = deviceProducts.length > 0 ? deviceProducts : fallbackProducts;
+  const isBackup = products.some((p: any) => p.isBackup === true);
+  const displayProducts =
+    deviceProducts.length > 0
+      ? deviceProducts
+      : isBackup
+      ? fallbackProducts
+      : [];
 
   return (
     <>

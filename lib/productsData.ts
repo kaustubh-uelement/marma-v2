@@ -19,6 +19,7 @@ export interface Product {
   accordingData?: Record<string, any> | any[];
   hero?: Record<string, any>;
   specifications?: any[];
+  isBackup?: boolean;
 }
 
 export const defaultProducts: Product[] = [
@@ -39,6 +40,7 @@ export const defaultProducts: Product[] = [
     ],
     inStock: true,
     to: "/store/safeenterprise-400",
+    isBackup: true,
   },
   {
     id: "safeenterprise-200",
@@ -54,6 +56,7 @@ export const defaultProducts: Product[] = [
     images: ["/images/product/SafeEnterprise2001.webp"],
     inStock: true,
     to: "/store/safeenterprise-200",
+    isBackup: true,
   },
   {
     id: "saferemote",
@@ -69,6 +72,7 @@ export const defaultProducts: Product[] = [
     images: ["/images/product/Frame 209.webp"],
     inStock: true,
     to: "/store/saferemote",
+    isBackup: true,
   },
   {
     id: "safebiz",
@@ -84,6 +88,7 @@ export const defaultProducts: Product[] = [
     images: ["/images/banners/homepage-right-banner1.webp"],
     inStock: true,
     to: "/store/safebiz",
+    isBackup: true,
   },
   {
     id: "safehome",
@@ -99,6 +104,7 @@ export const defaultProducts: Product[] = [
     images: ["/images/banners/solution-banner-right1.webp"],
     inStock: true,
     to: "/store/safehome",
+    isBackup: true,
   },
 ];
 
@@ -149,13 +155,14 @@ function mapBackendToProduct(item: any, index: number): Product {
     accordingData: item.accordingData || {},
     hero: item.hero || {},
     specifications: item.specifications || [],
+    isBackup: false,
   };
 }
 
 /**
- * Fetches active products from the API and gracefully merges with core defaults.
- * Any custom product added to the API (e.g. ai-drive) is included and presented,
- * while ensuring default showcase devices remain available if not overridden.
+ * Fetches active products from the API.
+ * Returns ONLY live API products when available (no seed data merged).
+ * If the API call fails or returns empty, ONLY THEN returns defaultProducts backup.
  */
 export async function getProducts(): Promise<Product[]> {
   try {
@@ -164,7 +171,7 @@ export async function getProducts(): Promise<Product[]> {
     });
 
     if (!response.ok) {
-      console.warn("Products API response not ok, status:", response.status);
+      console.warn("Products API response not ok, using backup data. Status:", response.status);
       return defaultProducts;
     }
 
@@ -172,29 +179,14 @@ export async function getProducts(): Promise<Product[]> {
     const rows = Array.isArray(data) ? data : data?.data || [];
 
     if (!rows.length) {
+      console.warn("No products returned from API, using backup data");
       return defaultProducts;
     }
 
-    const apiProducts = rows.map((item: any, idx: number) => mapBackendToProduct(item, idx));
-
-    // Merge: Keep all API products. For any core default product that is NOT present in the API
-    // (by matching id or slug), append it so standard catalog items are preserved.
-    const merged = [...apiProducts];
-    for (const def of defaultProducts) {
-      const exists = apiProducts.some(
-        (p: Product) =>
-          p.id.toLowerCase() === def.id.toLowerCase() ||
-          p.slug.toLowerCase() === def.slug.toLowerCase() ||
-          p.name.toLowerCase() === def.name.toLowerCase()
-      );
-      if (!exists) {
-        merged.push(def);
-      }
-    }
-
-    return merged;
+    // Live API data only: No seed data / default products merged in
+    return rows.map((item: any, idx: number) => mapBackendToProduct(item, idx));
   } catch (error) {
-    console.error("Error fetching products from API:", error);
+    console.error("Error fetching products from API, using backup data:", error);
     return defaultProducts;
   }
 }
