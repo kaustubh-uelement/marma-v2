@@ -5,7 +5,7 @@ interface EndpointProductCardProps {
   tagline: string;
   subTitle?: React.ReactNode;
   primaryFeature: React.ReactNode;
-  features: string[];
+  features: (string | React.ReactNode)[];
   image?: string;
   imageAlt?: string;
   imageClass?: string;

@@ -151,8 +151,18 @@ function mapBackendToProduct(item: any, index: number): Product {
     isAi: Boolean(item.isAi),
     isCube: Boolean(item.isCube),
     to: item.to || `/store/${slug}`,
-    keyCapabilities: item.keyCapabilities || item.keycapabilities || {},
-    accordingData: item.accordingData || {},
+    keyCapabilities:
+      item.keyCapabilities ||
+      item.keycapabilities ||
+      item.key_capabilities ||
+      item.capabilities ||
+      item.features ||
+      {},
+    accordingData:
+      item.accordingData ||
+      item.accordingdata ||
+      item.according_data ||
+      {},
     hero: item.hero || {},
     specifications: item.specifications || [],
     isBackup: false,
