@@ -54,7 +54,7 @@ export default function MobileAppShowcase() {
           <div className="flex-1 w-full max-w-[400px] h-full! flex flex-col justify-between items-end gap-10 lg:ml-auto">
             {/* Image Placeholder Frame */}
             <div className="w-full relative rounded-[20px] overflow-hidden aspect-9/12 lg:aspect-9/12 flex-shrink-0 shadow-xl border border-[rgba(0,0,0,0.05)] bg-[#E5E5E5] flex items-center justify-center">
-              <Image src="/images/solutions/ai_tech2.webp" alt="Marma Mobile App" fill className="object-fill scale-y-125" sizes="(max-width: 1024px) 100vw, 400px" />
+              <Image src="/images/solutions/ai_tech3.webp" alt="Marma Mobile App" fill className="object-fill scale-y-125" sizes="(max-width: 1024px) 100vw, 400px" />
             </div>
 
           </div>

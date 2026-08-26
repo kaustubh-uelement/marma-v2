@@ -806,3 +806,103 @@ img {
   60% { transform: translateX(-4px); }
   80% { transform: translateX(4px); }
 }
+   BLOG PAGES
+   =============================================================== */
+
+.prose-blog {
+  color: var(--color-text-dark);
+  font-family: var(--font-body);
+}
+
+.prose-blog p {
+  @apply text-[16px] md:text-[18px] leading-[1.8] text-[#333333] mb-6 font-light;
+}
+
+.prose-blog a {
+  @apply text-brand-red underline hover:opacity-75 transition-opacity font-medium;
+}
+
+.prose-blog h2 {
+  @apply font-title font-bold text-[24px] md:text-[32px] text-text-dark mt-12 mb-6 tracking-tight;
+}
+
+.prose-blog h3 {
+  @apply font-title font-semibold text-[20px] md:text-[24px] text-text-dark mt-8 mb-4 tracking-tight;
+}
+
+.prose-blog ul,
+.prose-blog ol {
+  @apply pl-6 mb-8 space-y-3;
+}
+
+.prose-blog ul {
+  list-style-type: disc;
+}
+
+.prose-blog ol {
+  list-style-type: decimal;
+}
+
+.prose-blog li {
+  @apply text-[16px] md:text-[18px] leading-[1.8] text-[#333333] font-light;
+}
+
+.prose-blog strong {
+  @apply font-semibold text-text-dark;
+}
+
+.prose-blog table {
+  width: 100%;
+  margin-bottom: 2rem;
+  border-spacing: 0;
+  border: 1px solid #D9D9D9;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.prose-blog thead {
+  background-color: #F5F5F5;
+}
+
+.prose-blog th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  padding: 12px 20px;
+  font-size: 15px;
+  border-bottom: 2px solid #D9D9D9;
+}
+
+.prose-blog td {
+  padding: 12px 20px;
+  font-size: 15px;
+  color: #333333;
+  border-bottom: 1px solid #EFEFEF;
+}
+
+.prose-blog tr:last-child td {
+  border-bottom: none;
+}
+
+.prose-blog tbody tr:hover td {
+  background-color: #FAFAFA;
+}
+
+/* ======= Partner Carousel ======= */
+@keyframes partner-carousel-scroll {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.partner-carousel-track {
+  animation: partner-carousel-scroll 40s linear infinite;
+}
+
+.partner-carousel-track:hover {
+  animation-play-state: paused;
+}

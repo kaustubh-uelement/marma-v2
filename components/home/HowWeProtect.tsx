@@ -48,7 +48,7 @@ const TAB_FEATURES: Record<string, FeatureItem[]> = {
       title: "Scalable Enterprise Architecture",
       subtitle: "Built to grow with your business.",
       description:
-        "From branch offices to large campuses, deploy high-performance security gateways and scale seamlessly as your organization expands.",
+        "From branch offices to large campuses, deploy high-performance security software and gateways and scale seamlessly as your organization expands.",
     },
     {
       id: "enterprise-4",

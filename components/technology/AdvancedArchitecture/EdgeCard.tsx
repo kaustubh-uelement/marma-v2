@@ -13,11 +13,7 @@ export default function EdgeCard({ card }: EdgeCardProps) {
       className="absolute -translate-x-1/2 -translate-y-1/3 lg:-translate-y-1/2 z-30 scale-[0.70] sm:scale-75 md:scale-90 xl:scale-100 origin-top"
       style={{ left: card.pos.left, top: card.pos.top }}
     >
-      <div
-        className="card-node-inner flex flex-col items-center md:bg-white p-3 md:p-5 rounded-[12px] md:rounded-[20px] cursor-pointer shadow-[0px_8px_30px_rgba(0,0,0,0.04)] border border-[#F0F0F0] w-[130px] sm:w-[160px] md:w-[220px] bg-white"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
+      <div className="card-node-inner flex flex-col items-center md:bg-white p-3 md:p-5 rounded-[12px] md:rounded-[20px] shadow-[0px_8px_30px_rgba(0,0,0,0.04)] border border-[#F0F0F0] w-[130px] sm:w-[160px] md:w-[220px] bg-white">
         <h4 className="font-body font-medium text-[12px] md:text-[14px] text-[#333333] mb-3 text-center">
           {card.title}
         </h4>
