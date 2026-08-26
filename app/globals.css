@@ -7,9 +7,11 @@
   --font-banner: var(--font-sora), sans-serif;
 
   /* ================= Navbar Styles ================= */
-  --nav-gradient: linear-gradient(90deg,
-      rgba(255, 255, 255, 0.9) 0%,
-      rgba(255, 255, 255, 0.36) 100%);
+  --nav-gradient: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 255, 255, 0.36) 100%
+  );
   --nav-blur: blur(1000px);
   --nav-shadow: 0px 4px 24px -1px #00000033;
 }
@@ -33,7 +35,6 @@
 }
 
 @keyframes blink {
-
   0%,
   100% {
     opacity: 1;
@@ -46,7 +47,6 @@
 
 html {
   scroll-behavior: smooth;
-
 }
 
 body {
@@ -204,15 +204,13 @@ img {
   .tp-new-badge {
     font-family: var(--font-title);
     @apply font-normal text-[16px] md:text-[20px] leading-[21px] tracking-[-0.01em] text-white;
-    background: linear-gradient(90deg, rgba(255, 0, 0, 0) 9.13%, #FF0000 100%);
+    background: linear-gradient(90deg, rgba(255, 0, 0, 0) 9.13%, #ff0000 100%);
   }
 
   .tp-know-more {
     font-family: var(--font-title);
     @apply font-normal text-[16px] md:text-[20px] leading-[21px] tracking-[-0.01em];
   }
-
-
 }
 
 /* ===============================================================
@@ -228,9 +226,11 @@ img {
 }
 
 .navbar-glass {
-  background: linear-gradient(186.29deg,
-      rgba(255, 255, 255, 0.308) -32.46%,
-      rgba(255, 255, 255, 0.056) 279.84%);
+  background: linear-gradient(
+    186.29deg,
+    rgba(255, 255, 255, 0.308) -32.46%,
+    rgba(255, 255, 255, 0.056) 279.84%
+  );
   backdrop-filter: blur(45.73509216308594px);
   -webkit-backdrop-filter: blur(45.73509216308594px);
   box-shadow: 0px 3.66px 21.95px -0.91px #00000033;
@@ -278,9 +278,11 @@ img {
 }
 
 .footer-form-glass {
-  background: linear-gradient(130.96deg,
-      rgba(255, 255, 255, 0.176) -36.72%,
-      rgba(255, 255, 255, 0.032) 100%);
+  background: linear-gradient(
+    130.96deg,
+    rgba(255, 255, 255, 0.176) -36.72%,
+    rgba(255, 255, 255, 0.032) 100%
+  );
   border: 1px solid #ffffff47;
   backdrop-filter: blur(45.73509216308594px);
 
@@ -553,9 +555,11 @@ img {
 } */
 
 .stats-glass-card {
-  background: linear-gradient(130.96deg,
-      rgba(255, 255, 255, 0.2035) -36.72%,
-      rgba(255, 255, 255, 0.037) 100%);
+  background: linear-gradient(
+    130.96deg,
+    rgba(255, 255, 255, 0.2035) -36.72%,
+    rgba(255, 255, 255, 0.037) 100%
+  );
   -webkit-backdrop-filter: blur(45.7px);
   backdrop-filter: blur(45.7px);
   box-shadow: 0px 3.66px 21.95px -0.91px #00000033;
@@ -685,7 +689,7 @@ img {
 }
 
 .footer-form-select option {
-  background-color: #201C1C;
+  background-color: #201c1c;
   color: white;
 }
 
@@ -800,14 +804,24 @@ img {
 }
 
 @keyframes authShake {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-6px); }
-  40% { transform: translateX(6px); }
-  60% { transform: translateX(-4px); }
-  80% { transform: translateX(4px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-6px);
+  }
+  40% {
+    transform: translateX(6px);
+  }
+  60% {
+    transform: translateX(-4px);
+  }
+  80% {
+    transform: translateX(4px);
+  }
 }
-   BLOG PAGES
-   =============================================================== */
+/* BLOG PAGES */
 
 .prose-blog {
   color: var(--color-text-dark);
@@ -855,13 +869,13 @@ img {
   width: 100%;
   margin-bottom: 2rem;
   border-spacing: 0;
-  border: 1px solid #D9D9D9;
+  border: 1px solid #d9d9d9;
   border-radius: 12px;
   overflow: hidden;
 }
 
 .prose-blog thead {
-  background-color: #F5F5F5;
+  background-color: #f5f5f5;
 }
 
 .prose-blog th {
@@ -870,14 +884,14 @@ img {
   color: var(--color-text-dark);
   padding: 12px 20px;
   font-size: 15px;
-  border-bottom: 2px solid #D9D9D9;
+  border-bottom: 2px solid #d9d9d9;
 }
 
 .prose-blog td {
   padding: 12px 20px;
   font-size: 15px;
   color: #333333;
-  border-bottom: 1px solid #EFEFEF;
+  border-bottom: 1px solid #efefef;
 }
 
 .prose-blog tr:last-child td {
@@ -885,7 +899,7 @@ img {
 }
 
 .prose-blog tbody tr:hover td {
-  background-color: #FAFAFA;
+  background-color: #fafafa;
 }
 
 /* ======= Partner Carousel ======= */
