@@ -281,16 +281,28 @@ const smbSpecs: SpecItem[] = [
 ];
 
 function getSpecsForProduct(product: any): SpecItem[] {
-  // If the API returned keyCapabilities, use those
-  if (product?.keyCapabilities?.length) {
+  // If there are explicit specifications on the product, use those
+  if (Array.isArray(product?.specifications) && product.specifications.length > 0) {
+    return product.specifications;
+  }
+  // If the API returned keyCapabilities as an array, use those
+  if (Array.isArray(product?.keyCapabilities) && product.keyCapabilities.length > 0) {
     return product.keyCapabilities.map((c: any) => ({
-      label: c.title,
-      value: c.description,
+      label: c.title || c.label || "Feature",
+      value: c.description || c.value || "",
     }));
   }
-  // If there are explicit specifications on the product, use those
-  if (product?.specifications?.length) {
-    return product.specifications;
+  // If keyCapabilities is a non-empty object
+  if (
+    product?.keyCapabilities &&
+    typeof product.keyCapabilities === "object" &&
+    !Array.isArray(product.keyCapabilities) &&
+    Object.keys(product.keyCapabilities).length > 0
+  ) {
+    return Object.entries(product.keyCapabilities).map(([k, v]) => ({
+      label: k.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase()),
+      value: String(v),
+    }));
   }
   // Fallback: infer from name
   const name = (product?.name || product?.title || "").toLowerCase();

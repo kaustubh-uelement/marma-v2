@@ -17,6 +17,33 @@ const homeGatewaySpecifications: SpecificationProductItem[] = [
   { label: "Recommended Users", value: "Up to 64" },
 ];
 
+function getSafeSpecifications(
+  prod: any,
+  fallbackSpecs: SpecificationProductItem[]
+): SpecificationProductItem[] {
+  if (Array.isArray(prod?.specifications) && prod.specifications.length > 0) {
+    return prod.specifications;
+  }
+  if (Array.isArray(prod?.keyCapabilities) && prod.keyCapabilities.length > 0) {
+    return prod.keyCapabilities.map((c: any) => ({
+      label: c.title || c.label || "Feature",
+      value: c.description || c.value || "",
+    }));
+  }
+  if (
+    prod?.keyCapabilities &&
+    typeof prod.keyCapabilities === "object" &&
+    !Array.isArray(prod.keyCapabilities) &&
+    Object.keys(prod.keyCapabilities).length > 0
+  ) {
+    return Object.entries(prod.keyCapabilities).map(([k, v]) => ({
+      label: k.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase()),
+      value: String(v),
+    }));
+  }
+  return fallbackSpecs;
+}
+
 export default function HomeSolutions({ products = [] }: { products?: any[] }) {
   const getProduct = (searchString: string) => {
     return products.find((p: any) =>
@@ -62,11 +89,10 @@ export default function HomeSolutions({ products = [] }: { products?: any[] }) {
               descript={prod.description || "SafeHome protects all connected devices on your network from cyberattacks targeting your financial and personal data, safeguarding your privacy and protecting your family on the internet."}
               image={prod.image || "/images/banners/solution-banner-right1.webp"}
               imageAlt={prod.imageAlt || prod.name || prod.title || "Home security device"}
-              specification={
-                prod.keyCapabilities
-                  ? prod.keyCapabilities.map((c: any) => ({ label: c.title, value: c.description }))
-                  : prod.specifications || homeGatewaySpecifications
-              }
+              specification={getSafeSpecifications(
+                prod,
+                homeGatewaySpecifications
+              )}
             />
           </div>
         );

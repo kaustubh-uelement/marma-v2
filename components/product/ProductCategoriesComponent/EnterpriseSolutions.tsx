@@ -45,6 +45,33 @@ const safeRemoteFirewallSpecifications: SpecificationProductItem[] = [
   { label: "Recommended Users", value: "Up to 64" },
 ];
 
+function getSafeSpecifications(
+  prod: any,
+  fallbackSpecs: SpecificationProductItem[]
+): SpecificationProductItem[] {
+  if (Array.isArray(prod?.specifications) && prod.specifications.length > 0) {
+    return prod.specifications;
+  }
+  if (Array.isArray(prod?.keyCapabilities) && prod.keyCapabilities.length > 0) {
+    return prod.keyCapabilities.map((c: any) => ({
+      label: c.title || c.label || "Feature",
+      value: c.description || c.value || "",
+    }));
+  }
+  if (
+    prod?.keyCapabilities &&
+    typeof prod.keyCapabilities === "object" &&
+    !Array.isArray(prod.keyCapabilities) &&
+    Object.keys(prod.keyCapabilities).length > 0
+  ) {
+    return Object.entries(prod.keyCapabilities).map(([k, v]) => ({
+      label: k.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase()),
+      value: String(v),
+    }));
+  }
+  return fallbackSpecs;
+}
+
 export default function EnterpriseSolutions({ products = [] }: { products?: any[] }) {
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
 
@@ -237,11 +264,10 @@ export default function EnterpriseSolutions({ products = [] }: { products?: any[
                     descript={prod.description || enterpriseDescription}
                     image={prod.image || "/images/product/SafeEnterprise2001.webp"}
                     imageAlt={prod.imageAlt || prod.name || prod.title || "Enterprise security device"}
-                    specification={
-                      prod.keyCapabilities
-                        ? prod.keyCapabilities.map((c: any) => ({ label: c.title, value: c.description }))
-                        : prod.specifications || enterprise200Specifications
-                    }
+                    specification={getSafeSpecifications(
+                      prod,
+                      enterprise200Specifications
+                    )}
                   />
                 </div>
               </div>
