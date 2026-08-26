@@ -183,7 +183,7 @@ export default function Banner({
         {overlay && <div className="absolute inset-0 bg-black/70 z-[5]" />}
       </div>
 
-      <div className="h-[96svh] lg:h-[93svh] relative z-10 overflow-hidden w-full flex items-center lg:items-end">
+      <div className="h-[96svh] lg:h-[93svh] relative z-10 overflow-hidden w-full flex items-center lg:items-center">
         {/* Main Content Container inside the Banner */}
         <div className="relative z-20 px-6 lg:px-16 h-3/5 mb-14 w-full lg:py-0">
           {/* Left Column: Text, Subtitle, and Buttons */}

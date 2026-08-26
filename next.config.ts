@@ -10,7 +10,7 @@ const ContentSecurityPolicy = [
   "object-src 'none'",
   "font-src 'self' data: https://fonts.gstatic.com https://api.fontshare.com",
   isDev
-    ? "connect-src 'self' https: ws://127.0.0.1:* ws://localhost:*"
+    ? "connect-src 'self' https: http://localhost:* http://127.0.0.1:* ws://127.0.0.1:* ws://localhost:*"
     : "connect-src 'self' https:",
   "form-action 'self' https://formsubmit.co",
   "frame-src https://www.google.com https://www.recaptcha.net https://formsubmit.co https://www.googletagmanager.com",

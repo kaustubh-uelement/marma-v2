@@ -5,6 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import { User } from "lucide-react";
 
 const navLinks = [
   { href: "/solutions", label: "Solutions" },
@@ -72,6 +74,7 @@ export default function Navbar() {
   const [isMobileSolutionsOpen, setIsMobileSolutionsOpen] = useState(false);
   const pathname = usePathname();
   const headerRef = useRef<HTMLElement>(null);
+  const { isAuthenticated, openAuthModal } = useAuth();
 
   useEffect(() => {
     let isMounted = true;
@@ -212,6 +215,43 @@ export default function Navbar() {
                 className="nav-icon"
               />
             </Link>
+
+            <Link
+              href="/store"
+              className="flex items-center justify-center transition-transform hover:scale-105"
+              aria-label="Store"
+            >
+              <Image
+                src="/images/global/shop-nav.svg"
+                alt="Store"
+                width={34}
+                height={34}
+                className="nav-icon"
+              />
+            </Link>
+
+            {/* Profile / Sign In */}
+            {isAuthenticated ? (
+              <Link
+                href="/profile"
+                className="flex items-center justify-center transition-transform hover:scale-105"
+                aria-label="Profile"
+              >
+                <span className="nav-icon w-[24px] h-[24px] sm:w-[28px] sm:h-[28px] lg:w-[34px] lg:h-[34px] rounded-full bg-[#3B3B3B] flex items-center justify-center">
+                  <User className="w-[14px] h-[14px] sm:w-[16px] sm:h-[16px] lg:w-[18px] lg:h-[18px] text-white" strokeWidth={2} />
+                </span>
+              </Link>
+            ) : (
+              <button
+                onClick={openAuthModal}
+                className="flex items-center justify-center transition-transform hover:scale-105"
+                aria-label="Sign In"
+              >
+                <span className="nav-icon w-[24px] h-[24px] sm:w-[28px] sm:h-[28px] lg:w-[34px] lg:h-[34px] rounded-full bg-[#3B3B3B] flex items-center justify-center">
+                  <User className="w-[14px] h-[14px] sm:w-[16px] sm:h-[16px] lg:w-[18px] lg:h-[18px] text-white" strokeWidth={2} />
+                </span>
+              </button>
+            )}
           </div>
 
           {/* Hamburger Menu Toggle (Mobile Only) */}
@@ -375,6 +415,45 @@ export default function Navbar() {
             />
             <span>Contact us</span>
           </Link>
+
+          <Link
+            href="/store"
+            className="flex items-center gap-3 fl2-nav border-b border-gray-200/30 pb-3"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <Image
+              src="/images/global/shop-nav.svg"
+              alt="Store"
+              width={24}
+              height={24}
+              className="nav-icon"
+            />
+            <span>Store</span>
+          </Link>
+
+          {/* Profile / Sign In (Mobile) */}
+          {isAuthenticated ? (
+            <Link
+              href="/profile"
+              className="flex items-center gap-3 fl2-nav border-b border-gray-200/30 pb-3"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <span className="w-[24px] h-[24px] rounded-full bg-[#3B3B3B] flex items-center justify-center flex-shrink-0">
+                <User className="w-[14px] h-[14px] text-white" strokeWidth={2} />
+              </span>
+              <span>My Profile</span>
+            </Link>
+          ) : (
+            <button
+              onClick={() => { setIsMobileMenuOpen(false); openAuthModal(); }}
+              className="flex items-center gap-3 fl2-nav border-b border-gray-200/30 pb-3 w-full text-left"
+            >
+              <span className="w-[24px] h-[24px] rounded-full bg-[#3B3B3B] flex items-center justify-center flex-shrink-0">
+                <User className="w-[14px] h-[14px] text-white" strokeWidth={2} />
+              </span>
+              <span>Sign In</span>
+            </button>
+          )}
         </div>
       )}
     </header>
