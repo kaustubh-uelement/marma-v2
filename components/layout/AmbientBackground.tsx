@@ -40,16 +40,17 @@ export default function AmbientBackground() {
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
-    // Cursor — initialised far off-screen so no repulsion on startup
+    // Cursor — initialised far off-screen so no attraction on startup
     const cursor = { x: -9999, y: -9999 };
 
-    // Repulsion tuning
-    const REPULSION_RADIUS = 280;   // px around cursor that triggers push
-    const REPULSION_STRENGTH = 5.5; // push force at cursor centre
-    const REPULSION_FALLOFF = 2.2;  // power exponent — sharper falloff near boundary
-    const RETURN_FRICTION = 0.88;   // per-frame decay so blobs drift back naturally
+    // Attraction tuning
+    const REPULSION_RADIUS = 320;   // px around cursor that triggers pull
+    const REPULSION_STRENGTH = 4.5; // pull force at cursor centre
+    const REPULSION_FALLOFF = 1.8;  // power exponent — gentler falloff for smooth gravity feel
+    const RETURN_FRICTION = 0.90;   // per-frame decay so blobs drift back to wander when cursor leaves
 
-    // Per-floater repulsion velocity, kept separate from wander and decays each frame
+    // Per-floater attraction velocity, kept separate from wander and decays each frame
+
     const repulseVx: number[] = [];
     const repulseVy: number[] = [];
 
@@ -172,7 +173,7 @@ export default function AmbientBackground() {
         item.baseVx = Math.cos(item.angle) * item.speed;
         item.baseVy = Math.sin(item.angle) * item.speed;
 
-        // 2. Cursor repulsion force
+        // 2. Cursor attraction force — pull blobs toward the cursor
         const dx = item.x - cursor.x;
         const dy = item.y - cursor.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
@@ -182,13 +183,15 @@ export default function AmbientBackground() {
           const ny = dy / dist;
           const t = 1 - dist / REPULSION_RADIUS;
           const force = REPULSION_STRENGTH * Math.pow(t, REPULSION_FALLOFF);
-          repulseVx[i] += nx * force;
-          repulseVy[i] += ny * force;
+          // Negate direction: pull toward cursor (opposite of repulsion)
+          repulseVx[i] -= nx * force;
+          repulseVy[i] -= ny * force;
         }
 
-        // Decay repulsion so blobs float back naturally when cursor leaves
+        // Decay attraction velocity so blobs float back to their natural wander when cursor leaves
         repulseVx[i] *= RETURN_FRICTION;
         repulseVy[i] *= RETURN_FRICTION;
+
 
         // 3. Combine wander + repulsion
         item.vx = item.baseVx + repulseVx[i];
