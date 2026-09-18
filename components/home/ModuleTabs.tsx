@@ -16,18 +16,23 @@ export default function ModuleTabs() {
 
   return (
     <>
-      <div className="mod-tabs glass glass-hi rv" role="tablist">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            className={`mod-tab ${activeTab === tab.id ? "on" : ""}`}
-            role="tab"
-            aria-selected={activeTab === tab.id}
-            onClick={() => setActiveTab(tab.id)}
-          >
-            {tab.label}
-          </button>
-        ))}
+      <div className="mod-tabs-scroller">
+        <div className="mod-tabs glass glass-hi rv" role="tablist">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              className={`mod-tab ${activeTab === tab.id ? "on" : ""}`}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              onClick={(e) => {
+                setActiveTab(tab.id);
+                e.currentTarget.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* m1: Endpoint agent */}
