@@ -7,6 +7,8 @@ interface LavaItem {
   y: number;
   vx: number;
   vy: number;
+  baseVx: number;
+  baseVy: number;
   speed: number;
   angle: number;
   wanderAngle: number;
@@ -38,7 +40,20 @@ export default function AmbientBackground() {
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
-    // STRICTLY shades of brand red, light red, crimson, and pinkish-red (Zero orange / amber)
+    // Cursor — initialised far off-screen so no repulsion on startup
+    const cursor = { x: -9999, y: -9999 };
+
+    // Repulsion tuning
+    const REPULSION_RADIUS = 280;   // px around cursor that triggers push
+    const REPULSION_STRENGTH = 5.5; // push force at cursor centre
+    const REPULSION_FALLOFF = 2.2;  // power exponent — sharper falloff near boundary
+    const RETURN_FRICTION = 0.88;   // per-frame decay so blobs drift back naturally
+
+    // Per-floater repulsion velocity, kept separate from wander and decays each frame
+    const repulseVx: number[] = [];
+    const repulseVy: number[] = [];
+
+    // STRICTLY shades of brand red, light red, crimson, pinkish-red. No orange / amber.
     const colors: [string, string][] = [
       ["rgba(216, 30, 44, 0.48)", "rgba(255, 117, 143, 0.26)"],  // Brand Red to Pinkish Red
       ["rgba(255, 30, 56, 0.46)", "rgba(255, 150, 172, 0.22)"],  // Electric True Red to Soft Pink-Red
@@ -61,19 +76,16 @@ export default function AmbientBackground() {
       let blurMax = 80;
 
       if (i < 3) {
-        // 3 Large ambient floating pools
         baseRadius = rand(220, isMobile ? 240 : 340);
         speed = rand(1.1, 1.8);
         blurMin = 60;
         blurMax = 95;
       } else if (i < 7) {
-        // 4 Medium drifting lava bodies
         baseRadius = rand(120, 195);
         speed = rand(1.6, 2.5);
         blurMin = 40;
         blurMax = 75;
       } else {
-        // 3 Buoyant floaters with active wander
         baseRadius = rand(65, 110);
         speed = rand(2.2, 3.2);
         blurMin = 25;
@@ -85,14 +97,14 @@ export default function AmbientBackground() {
       const y = rand(-40, height + 40);
       const angle = rand(0, Math.PI * 2);
       const palette = colors[Math.floor(rand(0, colors.length))];
+      const bvx = Math.cos(angle) * speed;
+      const bvy = Math.sin(angle) * speed;
 
       items.push({
-        x,
-        y,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        speed,
-        angle,
+        x, y,
+        vx: bvx, vy: bvy,
+        baseVx: bvx, baseVy: bvy,
+        speed, angle,
         wanderAngle: rand(0, Math.PI * 2),
         wanderSpeed: rand(0.03, 0.09),
         baseRadius,
@@ -106,57 +118,107 @@ export default function AmbientBackground() {
         pulsePhase: rand(0, Math.PI * 2),
         pulseSpeed: rand(0.012, 0.028),
       });
+
+      repulseVx.push(0);
+      repulseVy.push(0);
     }
+
+    // Cursor / touch event listeners
+    const onMouseMove = (e: MouseEvent) => {
+      cursor.x = e.clientX;
+      cursor.y = e.clientY;
+    };
+    const onMouseLeave = () => {
+      cursor.x = -9999;
+      cursor.y = -9999;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        cursor.x = e.touches[0].clientX;
+        cursor.y = e.touches[0].clientY;
+      }
+    };
+    const onTouchEnd = () => {
+      cursor.x = -9999;
+      cursor.y = -9999;
+    };
+
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseleave", onMouseLeave);
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
+    window.addEventListener("touchend", onTouchEnd);
 
     const handleResize = () => {
       if (!canvas) return;
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
     };
-
     window.addEventListener("resize", handleResize);
 
     let animationFrameId: number;
 
     const renderFrame = () => {
-      // Unconditional loop call first
       animationFrameId = window.requestAnimationFrame(renderFrame);
-
       ctx.clearRect(0, 0, width, height);
 
       for (let i = 0; i < items.length; i++) {
         const item = items[i];
 
-        // HIGH ENTROPY: Continuous fluid steering and wandering turbulence
+        // 1. Autonomous wander steering
         item.wanderAngle += item.wanderSpeed;
-        const steeringForce = Math.sin(item.wanderAngle) * 0.08 + (Math.random() - 0.5) * 0.06;
+        const steeringForce =
+          Math.sin(item.wanderAngle) * 0.08 + (Math.random() - 0.5) * 0.06;
         item.angle += steeringForce;
+        item.baseVx = Math.cos(item.angle) * item.speed;
+        item.baseVy = Math.sin(item.angle) * item.speed;
 
-        item.vx = Math.cos(item.angle) * item.speed;
-        item.vy = Math.sin(item.angle) * item.speed;
+        // 2. Cursor repulsion force
+        const dx = item.x - cursor.x;
+        const dy = item.y - cursor.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < REPULSION_RADIUS && dist > 0.1) {
+          const nx = dx / dist;
+          const ny = dy / dist;
+          const t = 1 - dist / REPULSION_RADIUS;
+          const force = REPULSION_STRENGTH * Math.pow(t, REPULSION_FALLOFF);
+          repulseVx[i] += nx * force;
+          repulseVy[i] += ny * force;
+        }
+
+        // Decay repulsion so blobs float back naturally when cursor leaves
+        repulseVx[i] *= RETURN_FRICTION;
+        repulseVy[i] *= RETURN_FRICTION;
+
+        // 3. Combine wander + repulsion
+        item.vx = item.baseVx + repulseVx[i];
+        item.vy = item.baseVy + repulseVy[i];
 
         item.x += item.vx;
         item.y += item.vy;
 
-        // Soft bounce with angle reflection and turbulence when crossing bounds
+        // 4. Soft boundary bounce
         const pad = item.radius * 0.4;
         if (item.x >= width + pad && item.vx > 0) {
           item.angle = Math.PI - item.angle + (Math.random() - 0.5) * 0.4;
           item.x = width + pad - 1;
+          repulseVx[i] *= -0.4;
         } else if (item.x <= -pad && item.vx < 0) {
           item.angle = Math.PI - item.angle + (Math.random() - 0.5) * 0.4;
           item.x = -pad + 1;
+          repulseVx[i] *= -0.4;
         }
-
         if (item.y >= height + pad && item.vy > 0) {
           item.angle = -item.angle + (Math.random() - 0.5) * 0.4;
           item.y = height + pad - 1;
+          repulseVy[i] *= -0.4;
         } else if (item.y <= -pad && item.vy < 0) {
           item.angle = -item.angle + (Math.random() - 0.5) * 0.4;
           item.y = -pad + 1;
+          repulseVy[i] *= -0.4;
         }
 
-        // Oscillate blur dynamically
+        // 5. Blur oscillation
         item.blur += item.initialBlurDirection;
         if (item.blur >= item.maxBlur) {
           item.initialBlurDirection = -Math.abs(item.initialBlurDirection);
@@ -164,20 +226,19 @@ export default function AmbientBackground() {
           item.initialBlurDirection = Math.abs(item.initialBlurDirection);
         }
 
-        // Multi-frequency organic breathing of radius
+        // 6. Multi-harmonic radius breathing
         item.pulsePhase += item.pulseSpeed;
         item.radius =
           item.baseRadius +
           Math.sin(item.pulsePhase) * (item.baseRadius * 0.16) +
           Math.cos(item.pulsePhase * 0.7) * (item.baseRadius * 0.08);
 
-        // Draw blurred gradient lava floater
+        // 7. Draw
         ctx.beginPath();
         if (ctx.filter) {
-          ctx.filter = `blur(${Math.max(12, Math.round(item.blur))}px)`;
+          ctx.filter = "blur(" + Math.max(12, Math.round(item.blur)) + "px)";
         }
 
-        // Offset radial gradient for 3D liquid depth fading strictly to pure transparent red
         const grd = ctx.createRadialGradient(
           item.x - item.radius * 0.18,
           item.y - item.radius * 0.18,
@@ -201,10 +262,13 @@ export default function AmbientBackground() {
       }
     };
 
-    // Start continuous animation loop
     animationFrameId = window.requestAnimationFrame(renderFrame);
 
     return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseleave", onMouseLeave);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onTouchEnd);
       window.removeEventListener("resize", handleResize);
       window.cancelAnimationFrame(animationFrameId);
     };
@@ -216,6 +280,3 @@ export default function AmbientBackground() {
     </div>
   );
 }
-
-
-
