@@ -56,13 +56,13 @@ export default function AmbientBackground() {
 
     // STRICTLY shades of brand red, light red, crimson, pinkish-red. No orange / amber.
     const colors: [string, string][] = [
-      ["rgba(216, 30, 44, 0.48)", "rgba(255, 117, 143, 0.26)"],  // Brand Red to Pinkish Red
-      ["rgba(255, 30, 56, 0.46)", "rgba(255, 150, 172, 0.22)"],  // Electric True Red to Soft Pink-Red
-      ["rgba(180, 20, 36, 0.42)", "rgba(255, 77, 101, 0.25)"],   // Deep Crimson to Light Red
-      ["rgba(235, 45, 70, 0.46)", "rgba(255, 185, 200, 0.20)"],  // Ruby Red to Pale Rose
-      ["rgba(255, 60, 85, 0.45)", "rgba(255, 130, 155, 0.24)"],  // Light Red to Pinkish Red
-      ["rgba(216, 30, 44, 0.46)", "rgba(255, 90, 115, 0.22)"],   // Brand Red to Light Red
-      ["rgba(240, 35, 60, 0.45)", "rgba(255, 160, 180, 0.20)"],  // Vivid Red to Pinkish Red
+      ["rgba(216, 30, 44, 0.36)", "rgba(255, 117, 143, 0.18)"],  // Brand Red to Pinkish Red
+      ["rgba(255, 30, 56, 0.34)", "rgba(255, 150, 172, 0.16)"],  // Electric True Red to Soft Pink-Red
+      ["rgba(180, 20, 36, 0.32)", "rgba(255, 77, 101, 0.18)"],   // Deep Crimson to Light Red
+      ["rgba(235, 45, 70, 0.35)", "rgba(255, 185, 200, 0.15)"],  // Ruby Red to Pale Rose
+      ["rgba(255, 60, 85, 0.34)", "rgba(255, 130, 155, 0.18)"],  // Light Red to Pinkish Red
+      ["rgba(216, 30, 44, 0.35)", "rgba(255, 90, 115, 0.16)"],   // Brand Red to Light Red
+      ["rgba(240, 35, 60, 0.34)", "rgba(255, 160, 180, 0.16)"],  // Vivid Red to Pinkish Red
     ];
 
     const isMobile = width < 768;

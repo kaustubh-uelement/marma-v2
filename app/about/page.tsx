@@ -75,7 +75,7 @@ export default function AboutUsPage() {
       <section className="sec">
         <div className="wrap">
           <div className="split">
-            <div className="rv">
+            <div className="card glass glass-hi glass-hover rv" style={{ padding: "36px 32px" }}>
               <div className="eyebrow">The philosophy</div>
               <h2 style={{ margin: "20px 0 20px" }}>
                 Defending the <span className="text-[var(--red)]">Marma</span> points of your infrastructure.

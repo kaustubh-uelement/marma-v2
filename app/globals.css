@@ -40,9 +40,9 @@
   --red-wash: rgba(216, 30, 44, 0.07);
   --red-line: rgba(216, 30, 44, 0.22);
   --ink: #170A0C;
-  --ink-2: #3D2C2E;
-  --mute: #6E5C5E;
-  --mute-2: #9A8A8C;
+  --ink-2: #2B1C1E;
+  --mute: #48373A;
+  --mute-2: #6A5659;
   --line: rgba(23, 10, 12, 0.10);
   --line-soft: rgba(23, 10, 12, 0.06);
   --g-fill: rgba(255, 255, 255, 0.52);
@@ -72,7 +72,7 @@ body {
   background: var(--canvas);
   color: var(--ink);
   font-family: var(--body);
-  font-weight: 300;
+  font-weight: 400;
   font-size: 16px;
   line-height: 1.62;
   -webkit-font-smoothing: antialiased;
@@ -280,7 +280,8 @@ p {
 
 .lede {
   font-size: 1.075rem;
-  color: var(--mute);
+  color: var(--ink-2);
+  font-weight: 400;
   max-width: 56ch;
   line-height: 1.72;
 }
@@ -1008,8 +1009,11 @@ textarea.inp {
 }
 
 .foot-card {
-  padding: 46px 40px 32px;
-  border-radius: 28px 28px 0 0;
+  padding: 52px 48px 36px;
+  border-radius: 28px;
+  background: var(--g-fill-hi);
+  border: 1px solid var(--g-edge);
+  box-shadow: 0 20px 40px -15px rgba(23, 10, 12, 0.08);
 }
 
 .foot-top {
@@ -1022,12 +1026,12 @@ textarea.inp {
 
 .foot h5 {
   font-family: var(--mono);
-  font-size: 0.63rem;
+  font-size: 0.68rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--mute-2);
+  color: var(--ink);
   margin: 0 0 16px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .foot ul {
@@ -1039,9 +1043,10 @@ textarea.inp {
 }
 
 .foot a {
-  font-size: 0.86rem;
-  color: var(--mute);
+  font-size: 0.88rem;
+  color: var(--ink-2);
   transition: color 0.18s;
+  font-weight: 400;
 }
 
 .foot a:hover {
@@ -1049,7 +1054,7 @@ textarea.inp {
 }
 
 .foot-addr {
-  font-size: 0.83rem;
+  font-size: 0.85rem;
   color: var(--mute);
   line-height: 1.7;
   margin-top: 16px;
@@ -1062,9 +1067,9 @@ textarea.inp {
   padding-top: 24px;
   flex-wrap: wrap;
   font-family: var(--mono);
-  font-size: 0.66rem;
+  font-size: 0.68rem;
   letter-spacing: 0.08em;
-  color: var(--mute-2);
+  color: var(--mute);
   text-transform: uppercase;
 }
 
