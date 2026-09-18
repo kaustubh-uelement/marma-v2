@@ -1,32 +1,46 @@
-import { getBlogs } from '@/lib/blogData';
-import BlogCard from '@/components/blogs/BlogCard';
+import { getBlogs } from "@/lib/blogData";
+import BlogCard from "@/components/blogs/BlogCard";
+import PageHero from "@/components/common/PageHero";
+import CtaSection from "@/components/common/CtaSection";
 
 export const metadata = {
-  title: 'Blogs | Marma Security',
-  description: 'Read the latest insights and updates from the Marma Security team.',
+  title: "Blog & Intelligence Reports | Marma Security",
+  description:
+    "Notes on what is actually going wrong. Short essays on incident investigations, architectural trade-offs, and live cyber telemetry.",
 };
+
+export const revalidate = 60;
 
 export default async function BlogsPage() {
   const blogs = await getBlogs();
 
   return (
-    <main className="bg-bg-light min-h-screen pt-[120px] pb-20">
-      <div className="container mx-auto px-4 md:px-8 max-w-[1280px]">
-        
-        <div className="text-center mb-16 max-w-[800px] mx-auto">
-          <h1 className="banner-title-default !text-text-dark mb-6">Our Latest Insights</h1>
-          <p className="font-body text-lg md:text-xl text-text-muted leading-relaxed font-light">
-            Stay up to date with the latest cybersecurity trends, best practices, and insights from our team of experts.
-          </p>
-        </div>
+    <>
+      <PageHero
+        crumbs={[{ label: "Home", href: "/" }, { label: "Blog" }]}
+        eyebrow="Intelligence & Field Notes"
+        title="Notes on what is actually going wrong."
+        lede="Short essays on incident investigations, architectural trade-offs and what we learn from watching traffic on customer estates."
+        primaryCta={{ text: "Start 30-day trial →", href: "/contact-us" }}
+        secondaryCta={{ text: "See the platform", href: "/technology" }}
+      />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {blogs.map((blog) => (
-            <BlogCard key={blog.id} blog={blog} />
-          ))}
-        </div>
+      <section className="sec">
+        <div className="wrap">
+          <div className="sec-hd rv">
+            <div className="eyebrow">Recent dispatches</div>
+            <h2>Latest investigations & security research.</h2>
+          </div>
 
-      </div>
-    </main>
+          <div className="g3 mt">
+            {blogs.map((blog) => (
+              <BlogCard key={blog.id} blog={blog} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <CtaSection primaryHref="/contact-us" secondaryHref="/contact-us" />
+    </>
   );
 }

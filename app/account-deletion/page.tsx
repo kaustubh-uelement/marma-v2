@@ -1,9 +1,19 @@
+import PageHero from "@/components/common/PageHero";
+import CtaSection from "@/components/common/CtaSection";
 import React from 'react';
 
 export default function AccountDeletionPage() {
   return (
-    <main className="flex min-h-screen flex-col bg-white">
-      <section className="w-full max-w-[900px] mx-auto px-6 lg:px-8 py-16 md:py-24">
+    <>
+      <PageHero
+        crumbs={[{ label: "Home", href: "/" }, { label: "Account Deletion" }]}
+        eyebrow="Account Services"
+        title="Delete your account and data"
+        lede="Clear instructions on permanently deleting your Marma Security cloud account and telemetry."
+      />
+      <section className="sec-sm">
+        <div className="wrap">
+          <div className="prose glass glass-hi max-w-[900px] mx-auto rounded-2xl">
 
         {/* Page Title */}
         <h1 className="text-3xl md:text-4xl font-bold text-text-dark mb-2 uppercase">
@@ -75,8 +85,11 @@ export default function AccountDeletionPage() {
           </Section>
 
         </div>
+      </div>
+        </div>
       </section>
-    </main>
+      <CtaSection primaryHref="/contact-us" secondaryHref="/contact-us" />
+    </>
   );
 }
 

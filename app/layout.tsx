@@ -3,6 +3,8 @@ import { Inter, IBM_Plex_Sans, Sora } from "next/font/google";
 import Navbar from "@/components/global/Navbar";
 import Footer from "@/components/global/Footer";
 import "./globals.css";
+import AmbientBackground from "@/components/layout/AmbientBackground";
+import InteractiveEffects from "@/components/common/InteractiveEffects";
 import CookieConsent from "@/components/global/CookieConsent";
 import ClientProviders from "@/components/global/ClientProviders";
 import Script from "next/script";
@@ -177,11 +179,13 @@ export default function RootLayout({
           />
         </noscript>
 
+        <AmbientBackground />
         <ClientProviders>
           <Navbar />
-          <main className="flex-grow ">{children}</main>
+          <main className="flex-grow">{children}</main>
           <Footer />
           <CookieConsent />
+          <InteractiveEffects />
         </ClientProviders>
 
         {/* analytics scripts */}

@@ -1,9 +1,19 @@
+import PageHero from "@/components/common/PageHero";
+import CtaSection from "@/components/common/CtaSection";
 import React from 'react';
 
 export default function PrivacyPolicyPage() {
   return (
-    <main className="flex min-h-screen flex-col bg-white">
-      <section className="w-full max-w-[900px] mx-auto px-6 lg:px-8 py-16 md:py-24">
+    <>
+      <PageHero
+        crumbs={[{ label: "Home", href: "/" }, { label: "Privacy Policy" }]}
+        eyebrow="Legal"
+        title="Privacy Policy"
+        lede="How we collect, protect, and manage your data across our platform, software, and gateways."
+      />
+      <section className="sec-sm">
+        <div className="wrap">
+          <div className="prose glass glass-hi max-w-[900px] mx-auto rounded-2xl">
 
         {/* Page Title */}
         <h1 className="text-3xl md:text-4xl font-bold text-text-dark mb-2">
@@ -349,8 +359,11 @@ export default function PrivacyPolicyPage() {
           </Section>
 
         </div>
+      </div>
+        </div>
       </section>
-    </main>
+      <CtaSection primaryHref="/contact-us" secondaryHref="/contact-us" />
+    </>
   );
 }
 

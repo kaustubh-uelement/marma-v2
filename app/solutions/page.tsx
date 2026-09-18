@@ -1,76 +1,100 @@
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.marmasec.com";
-const absoluteImageUrl = `${baseUrl}/images/banners/banner-solution.png`;
+import type { Metadata } from "next";
+import Link from "next/link";
+import PageHero from "@/components/common/PageHero";
+import CtaSection from "@/components/common/CtaSection";
 
-export const metadata = {
-  title: "Cybersecurity Solutions | Marma Security",
+export const metadata: Metadata = {
+  title: "Industry Solutions | Marma Security",
   description:
-    "Complete cybersecurity solutions for enterprises, small businesses, and homes. Enterprise-grade protection that works in minutes.",
-  alternates: {
-    canonical: "/solutions",
-  },
-  openGraph: {
-    title: "Cybersecurity Solutions | Marma Security",
-    description:
-      "Complete cybersecurity solutions for enterprises, small businesses, and homes. Enterprise-grade protection that works in minutes.",
-    url: "/solutions",
-    siteName: "Marma Security",
-    images: [
-      {
-        url: absoluteImageUrl,
-        width: 1200,
-        height: 630,
-        alt: "Marma Security Solutions",
-      },
-    ],
-    locale: "en_US",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Cybersecurity Solutions | Marma Security",
-    description:
-      "Complete cybersecurity solutions for enterprises, small businesses, and homes.",
-    images: [absoluteImageUrl],
-  },
+    "Cybersecurity solutions tuned for healthcare, finance, legal, manufacturing, education, SMBs, and enterprise estates.",
 };
 
-import HighlightedText from "@/components/global/HighlightedText";
-import SolutionsTabs from "@/components/solutions/SolutionsTabs";
-import SolutionsInfo from "@/components/solutions/SolutionsInfo";
-import SolutionsBanner from "@/components/solutions/SolutionsBanner";
-import { fetchApi } from "@/lib/api";
-
-export const dynamic = 'force-dynamic';
-
-export default async function SolutionsPage() {
-  let solutionData = [];
-
-  try {
-    const response = await fetchApi('api/v1/solution-highlights/active', {
-      cache: 'no-store'
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      solutionData = data?.data || data; // handle wrapped or unwrapped response
-    } else {
-      console.error('Failed to fetch solutions. Status:', response.status);
-    }
-  } catch (error) {
-    console.error('Error fetching solutions:', error);
-  }
+export default function SolutionsPage() {
+  const solutions = [
+    {
+      idx: "HC",
+      title: "Healthcare",
+      desc: "Patient records, connected devices and HIPAA evidence in one control set.",
+      href: "/solutions/healthcare",
+    },
+    {
+      idx: "FS",
+      title: "Finance",
+      desc: "Payment fraud and vendor impersonation caught before funds move.",
+      href: "/solutions/finance",
+    },
+    {
+      idx: "LG",
+      title: "Legal",
+      desc: "Matter files monitored for external sharing and link exposure.",
+      href: "/solutions/legal",
+    },
+    {
+      idx: "MF",
+      title: "Manufacturing",
+      desc: "Plant networks and OT segments protected without touching uptime.",
+      href: "/solutions/manufacturing",
+    },
+    {
+      idx: "ED",
+      title: "Education",
+      desc: "Distributed campuses, unmanaged devices, research data kept separate.",
+      href: "/solutions/education",
+    },
+    {
+      idx: "SM",
+      title: "Small business",
+      desc: "The full stack for organisations with no dedicated IT function.",
+      href: "/solutions/small-and-medium-business",
+    },
+    {
+      idx: "RC",
+      title: "Residential & commercial",
+      desc: "Building-wide protection for CCTV, access control and IoT.",
+      href: "/solutions/residential",
+    },
+    {
+      idx: "EN",
+      title: "Enterprise",
+      desc: "Multi-site estates, private-DC hosting and SIEM integration.",
+      href: "/solutions/enterprise",
+    },
+  ];
 
   return (
-    <main className="flex min-h-screen flex-col bg-[#FFFFFF]">
-      <div className="md:pt-0">
-        <SolutionsBanner />
-      </div>
+    <>
+      <PageHero
+        crumbs={[{ label: "Home", href: "/" }, { label: "Solutions" }]}
+        eyebrow="Solutions"
+        title="Same platform. Different threat model."
+        lede="The underlying AI core and enforcement modules are the same across every deployment. What changes is what Marma watches for, what it treats as sensitive, and which compliance frameworks it maps to."
+        primaryCta={{ text: "Start 30-day trial →", href: "/contact-us" }}
+        secondaryCta={{ text: "See the platform", href: "/technology" }}
+      />
 
-      <div className="">
-        <SolutionsTabs solutionData={solutionData} />
-      </div>
+      <section className="sec">
+        <div className="wrap">
+          <div className="sec-hd rv">
+            <div className="eyebrow">Industry Sectors</div>
+            <h2>Tuned to what you're actually protecting.</h2>
+          </div>
+          <div className="g4 mt">
+            {solutions.map((sol) => (
+              <Link
+                key={sol.href}
+                className="card glass glass-hi glass-hover rv"
+                href={sol.href}
+              >
+                <span className="idx">{sol.idx}</span>
+                <h4>{sol.title}</h4>
+                <p>{sol.desc}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
 
-      <SolutionsInfo />
-    </main>
+      <CtaSection primaryHref="/contact-us" secondaryHref="/contact-us" />
+    </>
   );
 }

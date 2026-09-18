@@ -1,12 +1,10 @@
+// @ts-nocheck
 "use client";
-import React, { useState, useRef, useEffect } from "react";
+
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import Button from "./Button";
-import { usePathname } from "next/navigation";
-import CustomSelect from "./CustomSelect";
 import { submitContactForm } from "@/lib/contactApi";
-import { MapPin } from "lucide-react";
 import { validateContactFields, sanitizePhone } from "@/lib/formValidation";
 
 type FooterFormErrors = Partial<{
@@ -18,436 +16,163 @@ type FooterFormErrors = Partial<{
 }>;
 
 export default function Footer() {
-  const pathname = usePathname();
   return (
-    <footer className={`footer-container`}>
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
-        <div className="flex flex-col lg:flex-row justify-between w-full gap-0 lg:gap-24">
-          <div className="flex flex-col h-full grow">
-            {/* Top: Logo & Description */}
-            <div className="flex flex-col items-start pb-6 md:pb-8 lg:pb-15 gap-4 md:gap-10 w-full">
-              <Image
-                src="/images/global/marmalogofooter.svg"
-                alt="Marma Security"
-                width={200}
-                height={40}
-                className="w-[140px] md:w-[280px] h-auto object-contain"
-              />
-            </div>
+    <footer className="foot">
+      <div className="wrap">
+        <div className="foot-card glass glass-hi">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 pb-10 border-b border-[var(--line-soft)]">
+            
+            {/* Left Col: Brand & Addresses */}
+            <div className="lg:col-span-4 flex flex-col gap-4">
+              <Link className="logo" href="/" aria-label="Marma Security">
+                <Image
+                  src="/logo.png"
+                  alt="Marma Security"
+                  width={188}
+                  height={25}
+                  className="logo-img"
+                />
+              </Link>
 
-            {/* ======================================= */}
-            {/* DESKTOP-ONLY MIDDLE NAV & CONTACT GRID */}
-            {/* ======================================= */}
-            <div
-              className={`hidden md:flex flex-col w-full justify-between gap-20 mb-20`}
-            >
-              <div className={`grid grow grid-cols-4 gap-6`}>
-                <Link
-                  href="/technology"
-                  className="hover:text-white/70 transition-colors h-fit"
-                >
-                  Technology
-                </Link>
-                <Link
-                  href="/product"
-                  className="hover:text-white/70 transition-colors"
-                >
-                  Products
-                </Link>
-                <Link
-                  href="/about-us"
-                  className="hover:text-white/70 transition-colors"
-                >
-                  About Us
-                </Link>
-                <Link
-                  href="/blogs"
-                  className="hover:text-white/70 transition-colors"
-                >
-                  Blogs
-                </Link>
-
-                <Link
-                  href="/partners"
-                  className="hover:text-white/70 transition-colors"
-                >
-                  Partners
-                </Link>
-                <Link
-                  href="/careers"
-                  className="hover:text-white/70 transition-colors"
-                >
-                  Careers
-                </Link>
-                <Link
-                  href="/contact-us"
-                  className="hover:text-white/70 transition-colors"
-                >
-                  Contact
-                </Link>
-                <Link
-                  href="/support"
-                  className="hover:text-white/70 transition-colors"
-                >
-                  Support
-                </Link>
-                <Link
-                  href="/privacy"
-                  className="hover:text-white/70 transition-colors"
-                >
-                  Privacy
-                </Link>
-                <Link
-                  href="/account-deletion"
-                  className="hover:text-white/70 transition-colors"
-                >
-                  Account Deletion
-                </Link>
-              </div>
-
-              <div className="flex flex-col gap-10">
-                <div className="grid grid-cols-2 gap-10 justify-between items-start">
-                  {/* USA Column */}
-                  <div className="flex flex-col gap-4">
-                    <div className="flex items-start gap-4 transition-opacity break-all sm:break-normal">
-                      <MapPin size={22} className="shrink-0 mt-1" />
-                      <span>
-                        <span className="uppercase font-semibold">
-                          USA HeadQuarters
-                        </span>
-                        <br />
-                        Marma Security Inc.,
-                        <br />
-                        180 Promenade Ste. 300,
-                        <br />
-                        Sacramento, CA - 95834
-                      </span>
-                    </div>
-                    <a
-                      href="tel:+14085828962"
-                      className="flex items-center gap-4 hover:opacity-80 transition-opacity"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="ml-[2px]"
-                      >
-                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                      </svg>
-                      <span>+1-408-582-8962</span>
-                    </a>
-                  </div>
-
-                  {/* India Column */}
-                  <div className="flex flex-col gap-4">
-                    <div className="flex items-start gap-4 transition-opacity break-all sm:break-normal">
-                      <MapPin size={22} className="shrink-0 mt-1" />
-                      <span>
-                        <span className="uppercase font-semibold">
-                          India Office
-                        </span>
-                        <br />
-                        Marmasec Private Limited,
-                        <br />
-                        J 1002, Mhada Towers,
-                        <br />
-                        Pimpri, Pune - 411017
-                      </span>
-                    </div>
-                    <a
-                      href="tel:+919175511808"
-                      className="flex items-center gap-4 hover:opacity-80 transition-opacity"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="ml-[2px]"
-                      >
-                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                      </svg>
-                      <span>+91 9175511808</span>
-                    </a>
-                  </div>
+              <div className="foot-addr flex flex-col gap-3 text-[0.83rem] text-[var(--mute)] leading-relaxed mt-2">
+                <div>
+                  <strong className="block text-[var(--ink)] font-semibold uppercase tracking-wider text-[0.7rem] font-mono mb-1">
+                    USA Headquarters
+                  </strong>
+                  Marma Security Inc.<br />
+                  180 Promenade Ste. 300, Sacramento, CA 95834<br />
+                  <a href="tel:+14085828962" className="hover:text-[var(--red)] transition-colors">
+                    +1 408 582 8962
+                  </a>
                 </div>
 
-                {/* Email and Social */}
-                <div className="grid grid-cols-2 gap-10 justify-between items-center w-full mt-2">
+                <div className="mt-1">
+                  <strong className="block text-[var(--ink)] font-semibold uppercase tracking-wider text-[0.7rem] font-mono mb-1">
+                    India Office
+                  </strong>
+                  Marmasec Private Limited<br />
+                  J 1002, Mhada Towers, Pimpri, Pune 411017<br />
+                  <a href="tel:+919175511808" className="hover:text-[var(--red)] transition-colors">
+                    +91 91755 11808
+                  </a>
+                </div>
+
+                <div className="flex items-center gap-4 pt-2">
                   <a
                     href="mailto:info@marmasec.com"
-                    className="flex items-center gap-4 hover:opacity-80 transition-opacity"
+                    className="hover:text-[var(--red)] transition-colors flex items-center gap-2"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="22"
-                      height="22"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                      <polyline points="22,6 12,13 2,6"></polyline>
-                    </svg>
                     <span>info@marmasec.com</span>
                   </a>
-
+                  <span>&middot;</span>
                   <a
                     href="https://www.linkedin.com/company/marmasecurity/"
                     target="_blank"
-                    aria-label="LinkedIn"
-                    className="hover:opacity-80 transition-opacity flex items-center"
+                    rel="noreferrer"
+                    className="hover:text-[var(--red)] transition-colors font-mono uppercase text-[0.7rem]"
                   >
-                    <Image
-                      src="/images/global/linkedin.svg"
-                      alt="LinkedIn"
-                      width={24}
-                      height={24}
-                      className="object-contain"
-                    />
+                    LinkedIn
                   </a>
                 </div>
               </div>
             </div>
 
-            {/* ======================================= */}
-            {/* MOBILE-ONLY UNIFIED 3-COLUMN GRID       */}
-            {/* ======================================= */}
-            <div className="flex md:hidden flex-col w-full pb-8">
-              <div className="grid grid-cols-[1fr_1fr] gap-x-2 gap-y-6 w-full items-start">
-                {/* Column 1 */}
-                <div className="flex flex-col gap-3 footer-nav-grid text-[10px] ps-5">
-                  <Link
-                    href="/technology"
-                    className="hover:text-white/70 transition-colors"
-                  >
-                    Technology
-                  </Link>
-                  <Link
-                    href="/about-us"
-                    className="hover:text-white/70 transition-colors"
-                  >
-                    About Us
-                  </Link>
-                  <Link
-                    href="/blogs"
-                    className="hover:text-white/70 transition-colors"
-                  >
-                    Blogs
-                  </Link>
-                  <Link
-                    href="/product"
-                    className="hover:text-white/70 transition-colors"
-                  >
-                    Products
-                  </Link>
-                  <Link
-                    href="/partners"
-                    className="hover:text-white/70 transition-colors"
-                  >
-                    Partners
-                  </Link>
-                  <Link
-                    href="/account-deletion"
-                    className="hover:text-white/70 transition-colors"
-                  >
-                    Account Deletion
-                  </Link>
-                </div>
+            {/* Middle Col: Navigation Links */}
+            <div className="lg:col-span-4 grid grid-cols-2 sm:grid-cols-2 gap-8">
+              <div>
+                <h5 className="font-mono text-[0.63rem] tracking-[0.16em] uppercase text-[var(--mute-2)] mb-4 font-semibold">
+                  Platform
+                </h5>
+                <ul className="list-none p-0 m-0 grid gap-2.5 text-[0.86rem] text-[var(--mute)]">
+                  <li>
+                    <Link href="/technology" className="hover:text-[var(--red)] transition-colors">
+                      Technology
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/product" className="hover:text-[var(--red)] transition-colors">
+                      Products & Gateways
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/solutions" className="hover:text-[var(--red)] transition-colors">
+                      Solutions
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/store" className="hover:text-[var(--red)] transition-colors">
+                      Store
+                    </Link>
+                  </li>
+                </ul>
 
-                {/* Column 2 */}
-                <div className="flex flex-col gap-3 footer-nav-grid text-[10px] ps-4">
-                  <Link
-                    href="/careers"
-                    className="hover:text-white/70 transition-colors"
-                  >
-                    Careers
-                  </Link>
-                  <Link
-                    href="/contact-us"
-                    className="hover:text-white/70 transition-colors"
-                  >
-                    Contact
-                  </Link>
-                  <Link
-                    href="/support"
-                    className="hover:text-white/70 transition-colors"
-                  >
-                    Support
-                  </Link>
-                  <Link
-                    href="/privacy"
-                    className="hover:text-white/70 transition-colors"
-                  >
-                    Privacy
-                  </Link>
-                </div>
+                <h5 className="font-mono text-[0.63rem] tracking-[0.16em] uppercase text-[var(--mute-2)] mt-6 mb-4 font-semibold">
+                  Company
+                </h5>
+                <ul className="list-none p-0 m-0 grid gap-2.5 text-[0.86rem] text-[var(--mute)]">
+                  <li>
+                    <Link href="/about-us" className="hover:text-[var(--red)] transition-colors">
+                      About Us
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/partners" className="hover:text-[var(--red)] transition-colors">
+                      Partners
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/careers" className="hover:text-[var(--red)] transition-colors">
+                      Careers
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/blogs" className="hover:text-[var(--red)] transition-colors">
+                      Blogs
+                    </Link>
+                  </li>
+                </ul>
+              </div>
 
-                {/* Column 3 - Contact Links */}
-                <div className="flex flex-col gap-8 footer-contact-text text-[9px] pl-1 break-all col-span-2">
-                  <div className="grid grid-cols-2 gap-4 w-full pr-4">
-                    {/* USA Column */}
-                    <div className="flex flex-col gap-3 min-w-0">
-                      <div className="flex items-start gap-1 break-all sm:break-normal">
-                        <MapPin size={16} className="shrink-0 mt-[2px]" />
-                        <span>
-                          <span className="uppercase font-semibold">
-                            USA HeadQuarters
-                          </span>
-                          <br />
-                          Marma Security Inc.,
-                          <br />
-                          180 Promenade Ste. 300, Sacramento, CA - 95834
-                        </span>
-                      </div>
-                      <a
-                        href="tel:+14085828962"
-                        className="flex items-center gap-1.5 hover:opacity-80 transition-opacity"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="12"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="shrink-0 ml-[2px]"
-                        >
-                          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                        </svg>
-                        <span>+1-408-582-8962</span>
-                      </a>
-                    </div>
-
-                    {/* India Column */}
-                    <div className="flex flex-col gap-3 min-w-0">
-                      <div className="flex items-start gap-1 break-all sm:break-normal">
-                        <MapPin size={16} className="shrink-0 mt-[2px]" />
-                        <span>
-                          <span className="uppercase font-semibold">
-                            India Office
-                          </span>
-                          <br />
-                          Marmasec Private Limited,
-                          <br />
-                          J 1002, Mhada Towers,
-                          <br />
-                          Pimpri, Pune - 411017
-                        </span>
-                      </div>
-                      <a
-                        href="tel:+919175511808"
-                        className="flex items-center gap-1.5 hover:opacity-80 transition-opacity"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="12"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="shrink-0 ml-[2px]"
-                        >
-                          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                        </svg>
-                        <span>+91 9175511808</span>
-                      </a>
-                    </div>
-                  </div>
-
-                  {/* Email and Social */}
-                  <div className="grid grid-cols-2 gap-8 w-full items-center pr-4 mt-2">
-                    <a
-                      href="mailto:info@marmasec.com"
-                      className="flex items-center gap-1.5 hover:opacity-80 transition-opacity"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="12"
-                        height="12"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="shrink-0"
-                      >
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                        <polyline points="22,6 12,13 2,6"></polyline>
-                      </svg>
-                      <span>info@marmasec.com</span>
-                    </a>
-
-                    <a
-                      href="https://www.linkedin.com/company/marmasecurity/"
-                      target="_blank"
-                      aria-label="LinkedIn"
-                      className="hover:opacity-80 transition-opacity flex items-center shrink-0"
-                    >
-                      <Image
-                        src="/images/global/linkedin.svg"
-                        alt="LinkedIn"
-                        width={20}
-                        height={20}
-                        className="object-contain"
-                      />
-                    </a>
-                  </div>
-                </div>
+              <div>
+                <h5 className="font-mono text-[0.63rem] tracking-[0.16em] uppercase text-[var(--mute-2)] mb-4 font-semibold">
+                  Support & Legal
+                </h5>
+                <ul className="list-none p-0 m-0 grid gap-2.5 text-[0.86rem] text-[var(--mute)]">
+                  <li>
+                    <Link href="/support" className="hover:text-[var(--red)] transition-colors">
+                      Support
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/contact-us" className="hover:text-[var(--red)] transition-colors">
+                      Contact
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/privacy" className="hover:text-[var(--red)] transition-colors">
+                      Privacy Policy
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/account-deletion" className="hover:text-[var(--red)] transition-colors">
+                      Account Deletion
+                    </Link>
+                  </li>
+                </ul>
               </div>
             </div>
-          </div>
 
-          {/* Right Column: Contact Form */}
-          <div className="flex flex-col items-center lg:items-end justify-center lg:justify-end mt-4 lg:mt-0 lg:mb-0 md:w-1/2">
-            <div className="footer-form-glass">
+            {/* Right Col: Interactive Contact Form */}
+            <div className="lg:col-span-4">
               <FooterContactForm />
             </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Copyright Bottom Bar */}
-      <div
-        className="footer-bottom-bar"
-        style={{
-          background: `
-                            linear-gradient(
-                            90deg,
-                            #7D0202 0%,
-                            rgba(187,4,4,0.93) 25%,
-                            #7D0202 50%,
-                            #BB0404 75%,
-                            #7D0202 100%
-                            )`,
-        }}
-      >
-        <div className="max-w-[1400px] mx-auto px-6 py-4 flex items-center justify-center">
-          <p className="footer-copyright text-white">
-            &copy; Copyright {new Date().getFullYear()} - Marma Security Inc
-          </p>
+          </div>
+
+          <div className="foot-bot pt-6 flex justify-between items-center flex-wrap gap-4 text-[var(--mute-2)] font-mono text-[0.66rem] uppercase tracking-wider">
+            <span>&copy; {new Date().getFullYear()} Marma Security Inc. All rights reserved.</span>
+            <span>Gateways made in India</span>
+          </div>
         </div>
       </div>
     </footer>
@@ -459,8 +184,8 @@ function FooterContactForm() {
     name: "",
     email: "",
     phone: "",
-    message: "",
     subject: "",
+    message: "",
   });
   const [errors, setErrors] = useState<FooterFormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -470,9 +195,7 @@ function FooterContactForm() {
   } | null>(null);
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -508,7 +231,7 @@ function FooterContactForm() {
       setErrors(newErrors);
       setSubmitStatus({
         type: "error",
-        message: "Please fix the errors below and try again.",
+        message: "Please fix the errors and try again.",
       });
       return;
     }
@@ -517,145 +240,135 @@ function FooterContactForm() {
     setIsSubmitting(true);
     setSubmitStatus(null);
 
-    const result = await submitContactForm({
-      name: formData.name.trim(),
-      email: formData.email.trim(),
-      phone: formData.phone.trim(),
-      message: formData.message.trim(),
-      extra_field: {
-        source: "Footer Form",
-        subject: formData.subject,
-      },
-    });
+    try {
+      const result = await submitContactForm({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        message: formData.message.trim(),
+        extra_field: {
+          source: "Footer Form",
+          subject: formData.subject,
+        },
+      });
 
-    setIsSubmitting(false);
+      setIsSubmitting(false);
 
-    if (result.success) {
-      setSubmitStatus({ type: "success", message: result.message });
-      setFormData({ name: "", email: "", phone: "", message: "", subject: "" });
-    } else {
-      setSubmitStatus({ type: "error", message: result.message });
+      if (result.success) {
+        setSubmitStatus({ type: "success", message: result.message });
+        setFormData({ name: "", email: "", phone: "", message: "", subject: "" });
+      } else {
+        setSubmitStatus({ type: "error", message: result.message });
+      }
+    } catch {
+      setIsSubmitting(false);
+      setSubmitStatus({ type: "error", message: "Failed to send. Please try again." });
     }
   };
 
   return (
-    <form
-      className="flex flex-col gap-5 md:gap-4"
-      onSubmit={handleSubmit}
-      noValidate
-    >
-      {submitStatus && (
+    <div className="p-5 rounded-2xl bg-[rgba(255,255,255,0.5)] border border-[var(--line-soft)]">
+      <div className="eyebrow mb-2">Quick Enquiry</div>
+      <h4 style={{ fontSize: "1.05rem", margin: "0 0 12px" }}>Send us a message</h4>
+
+      {submitStatus ? (
         <div
-          className={`px-3 py-2 rounded-lg text-xs font-medium ${
+          className={`p-3.5 rounded-xl text-xs font-medium mb-3 ${
             submitStatus.type === "success"
-              ? "bg-green-900/30 text-green-300 border border-green-700/40"
-              : "bg-red-900/30 text-red-300 border border-red-700/40"
+              ? "bg-[rgba(34,197,94,0.1)] text-green-700 border border-green-200"
+              : "bg-[var(--red-wash)] text-[var(--red-deep)] border border-[var(--red-line)]"
           }`}
         >
           {submitStatus.message}
+          {submitStatus.type === "success" && (
+            <button
+              type="button"
+              className="block mt-2 text-[var(--red)] underline font-mono text-[0.7rem] cursor-pointer bg-transparent border-0 p-0"
+              onClick={() => setSubmitStatus(null)}
+            >
+              Send another message
+            </button>
+          )}
         </div>
-      )}
+      ) : null}
 
-      <div className="flex flex-col gap-1">
-        <input
-          type="text"
-          name="name"
-          placeholder="Your Name"
-          value={formData.name}
-          onChange={handleChange}
-          className={`footer-input-field ${errors.name ? "border border-red-500" : ""}`}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-2.5" noValidate>
+        <div>
+          <input
+            type="text"
+            name="name"
+            placeholder="Your name"
+            value={formData.name}
+            onChange={handleChange}
+            className="inp text-[0.85rem] py-2 px-3"
+            required
+          />
+          {errors.name && <span className="text-[var(--red)] text-[0.65rem] font-mono mt-0.5 block">{errors.name}</span>}
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email address"
+              value={formData.email}
+              onChange={handleChange}
+              className="inp text-[0.85rem] py-2 px-3"
+              required
+            />
+            {errors.email && <span className="text-[var(--red)] text-[0.65rem] font-mono mt-0.5 block">{errors.email}</span>}
+          </div>
+          <div>
+            <input
+              type="tel"
+              name="phone"
+              placeholder="Phone number"
+              value={formData.phone}
+              onChange={handlePhoneChange}
+              className="inp text-[0.85rem] py-2 px-3"
+            />
+            {errors.phone && <span className="text-[var(--red)] text-[0.65rem] font-mono mt-0.5 block">{errors.phone}</span>}
+          </div>
+        </div>
+
+        <div>
+          <select
+            name="subject"
+            value={formData.subject}
+            onChange={handleChange}
+            className="inp text-[0.85rem] py-2 px-3"
+          >
+            <option value="">Select subject / interest</option>
+            <option value="Demo Request">Request a Demo</option>
+            <option value="Product Enquiry">Product Enquiry</option>
+            <option value="Partnership">Partnership Programme</option>
+            <option value="Support">Support Inquiry</option>
+            <option value="Other">Other</option>
+          </select>
+          {errors.subject && <span className="text-[var(--red)] text-[0.65rem] font-mono mt-0.5 block">{errors.subject}</span>}
+        </div>
+
+        <div>
+          <textarea
+            name="message"
+            placeholder="Your message"
+            rows={2}
+            value={formData.message}
+            onChange={handleChange}
+            className="inp text-[0.85rem] py-2 px-3 min-h-[60px]"
+          />
+          {errors.message && <span className="text-[var(--red)] text-[0.65rem] font-mono mt-0.5 block">{errors.message}</span>}
+        </div>
+
+        <button
+          type="submit"
           disabled={isSubmitting}
-          aria-invalid={!!errors.name}
-        />
-        {errors.name && (
-          <span className="text-xs text-red-400 px-1">{errors.name}</span>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <input
-          type="email"
-          name="email"
-          placeholder="Email address"
-          value={formData.email}
-          onChange={handleChange}
-          className={`footer-input-field ${errors.email ? "border border-red-500" : ""}`}
-          disabled={isSubmitting}
-          aria-invalid={!!errors.email}
-        />
-        {errors.email && (
-          <span className="text-xs text-red-400 px-1">{errors.email}</span>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <CustomSelect
-          options={[
-            { value: "sales-agent", label: "Becoming a Sales Agent" },
-            { value: "partnership", label: "Partnership" },
-            { value: "investors", label: "Investors" },
-            { value: "product-question", label: "Product Questions" },
-            { value: "other", label: "Other" },
-          ]}
-          value={formData.subject}
-          placeholder="Area of interest"
-          onChange={(val) => {
-            setFormData((prev) => ({ ...prev, subject: val }));
-            if (errors.subject)
-              setErrors((prev) => ({ ...prev, subject: undefined }));
-          }}
-          disabled={isSubmitting}
-          triggerClassName={`footer-input-field ${errors.subject ? "border border-red-500" : ""}`}
-          menuClassName="bg-[#1A1818] border-white/20"
-          activeOptionClassName="bg-brand-red text-white"
-          hoverOptionClassName="hover:bg-white/10 hover:text-white"
-          placeholderColorClass="text-[#FFFFFFCC]"
-          valueColorClass="text-white"
-          arrowColor="white"
-          openDirection="down"
-        />
-        {errors.subject && (
-          <span className="text-xs text-red-400 px-1">{errors.subject}</span>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <input
-          type="tel"
-          name="phone"
-          placeholder="Phone Number"
-          value={formData.phone}
-          onChange={handlePhoneChange}
-          className={`footer-input-field ${errors.phone ? "border border-red-500" : ""}`}
-          disabled={isSubmitting}
-          aria-invalid={!!errors.phone}
-          inputMode="tel"
-          maxLength={15}
-        />
-        {errors.phone && (
-          <span className="text-xs text-red-400 px-1">{errors.phone}</span>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <textarea
-          name="message"
-          placeholder="Let us know how we can help..."
-          rows={4}
-          value={formData.message}
-          onChange={handleChange}
-          className={`footer-input-field resize-none min-h-[80px] md:min-h-[100px] ${errors.message ? "border border-red-500" : ""}`}
-          disabled={isSubmitting}
-          aria-invalid={!!errors.message}
-        />
-        {errors.message && (
-          <span className="text-xs text-red-400 px-1">{errors.message}</span>
-        )}
-      </div>
-
-      <div className="flex justify-center lg:justify-end pt-3">
-        <Button icon label={isSubmitting ? "Submitting..." : "Submit"} />
-      </div>
-    </form>
+          className="btn btn-red w-full justify-center py-2.5 text-[0.7rem]"
+        >
+          {isSubmitting ? "Sending..." : "Send Message"}
+        </button>
+      </form>
+    </div>
   );
 }

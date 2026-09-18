@@ -1,8 +1,12 @@
-import { getBlogBySlug } from "@/lib/blogData";
+import { getBlogBySlug, getBlogs } from "@/lib/blogData";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
+import PageHero from "@/components/common/PageHero";
+import CtaSection from "@/components/common/CtaSection";
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -12,12 +16,10 @@ export async function generateMetadata({
   const resolvedParams = await params;
   const blog = await getBlogBySlug(resolvedParams.slug);
 
-  if (!blog) return { title: "Blog Not Found" };
+  if (!blog) return { title: "Blog Not Found | Marma Security" };
 
   return {
-    title: {
-      absolute: blog.metaTitle || `${blog.title} | Marma Security Blogs`,
-    },
+    title: `${blog.metaTitle || blog.title} | Marma Security`,
     description: blog.metaDescription || blog.excerpt,
     openGraph: {
       title: blog.metaTitle || blog.title,
@@ -46,79 +48,67 @@ export default async function SingleBlogPage({
   }
 
   return (
-    <main className="bg-bg-white min-h-screen pt-[120px] pb-24">
-      <article className="container mx-auto px-4 md:px-8 max-w-[800px]">
-        {/* Back Link */}
-        <Link
-          href="/blogs"
-          className="inline-flex items-center gap-2 text-brand-red font-body font-medium mb-8 hover:opacity-80 transition-opacity"
-        >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M19 12H5M5 12L12 19M5 12L12 5" />
-          </svg>
-          Back to Blogs
-        </Link>
+    <>
+      <PageHero
+        crumbs={[
+          { label: "Home", href: "/" },
+          { label: "Blog", href: "/blogs" },
+          { label: blog.category || "Article" },
+        ]}
+        eyebrow={blog.category || "Security Dispatch"}
+        title={blog.title}
+        lede={blog.excerpt}
+        primaryCta={undefined}
+        secondaryCta={undefined}
+      />
 
-        {/* Header */}
-        <header className="mb-12 border-b border-[#E5E5E5] pb-8">
-          <div className="flex items-center gap-4 mb-6">
-            <span className="font-body text-sm font-semibold text-brand-red uppercase tracking-wider">
-              {blog.category}
-            </span>
-            <span className="w-1 h-1 bg-[#D9D9D9] rounded-full"></span>
-            <span className="fl5 text-text-muted">{blog.date}</span>
-            <span className="w-1 h-1 bg-[#D9D9D9] rounded-full"></span>
-            <span className="font-body text-sm text-text-muted">
-              {blog.readTime}
-            </span>
-          </div>
-
-          <h1 className="fl1 mb-6">{blog.title}</h1>
-
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-[#f0f0f0] flex items-center justify-center font-title font-bold text-text-dark">
-              {blog.author.charAt(0)}
+      <section className="sec-sm">
+        <div className="wrap">
+          <div className="max-w-[840px] mx-auto">
+            {/* Meta Bar */}
+            <div className="flex items-center justify-between pb-6 mb-8 border-b border-[var(--line-soft)] font-mono text-[0.72rem] text-[var(--mute-2)] uppercase tracking-wider">
+              <div className="flex items-center gap-3">
+                <span className="text-[var(--red)] font-semibold">{blog.author || "Marma Security Team"}</span>
+                <span>&middot;</span>
+                <span>{blog.date}</span>
+              </div>
+              {blog.readTime && <span>{blog.readTime}</span>}
             </div>
-            <div>
-              <p className="font-body font-semibold text-[15px] text-text-dark">
-                {blog.author}
-              </p>
-              <p className="font-body font-normal text-[13px] text-text-muted">
-                Marma Security Expert
-              </p>
+
+            {/* Featured Image */}
+            {blog.imageUrl && (
+              <div className="relative w-full h-[360px] md:h-[460px] rounded-2xl overflow-hidden mb-10 border border-[var(--line-soft)] shadow-sm">
+                <Image
+                  src={blog.imageUrl}
+                  alt={blog.title}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
+            )}
+
+            {/* Article Content */}
+            <div className="prose glass glass-hi rounded-2xl">
+              <div
+                className="prose-blog leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: blog.content }}
+              />
+
+              <div className="mt-12 pt-6 border-t border-[var(--line-soft)] flex justify-between items-center">
+                <Link href="/blogs" className="btn btn-glass" style={{ padding: "8px 18px", fontSize: "0.72rem" }}>
+                  &larr; Back to all dispatches
+                </Link>
+                <Link href="/contact-us" className="btn btn-red" style={{ padding: "8px 18px", fontSize: "0.72rem" }}>
+                  Start 30-day trial &rarr;
+                </Link>
+              </div>
             </div>
           </div>
-        </header>
+        </div>
+      </section>
 
-        {/* Featured Image */}
-        {blog.imageUrl && (
-          <div className="w-full mb-12 rounded-[16px] overflow-hidden border border-[#E5E5E5]">
-            <Image
-              src={blog.imageUrl}
-              alt={blog.altText || blog.title}
-              width={1200}
-              height={630}
-              className="w-full h-auto"
-              priority
-            />
-          </div>
-        )}
-
-        {/* Content */}
-        <div
-          className="prose-blog"
-          dangerouslySetInnerHTML={{ __html: blog.content }}
-        />
-      </article>
-    </main>
+      <CtaSection primaryHref="/contact-us" secondaryHref="/contact-us" />
+    </>
   );
 }
