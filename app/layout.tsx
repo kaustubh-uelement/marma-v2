@@ -7,6 +7,7 @@ import AmbientBackground from "@/components/layout/AmbientBackground";
 import InteractiveEffects from "@/components/common/InteractiveEffects";
 import CookieConsent from "@/components/global/CookieConsent";
 import ClientProviders from "@/components/global/ClientProviders";
+import BackToTop from "@/components/common/BackToTop";
 import Script from "next/script";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.marmasec.com";
@@ -186,6 +187,7 @@ export default function RootLayout({
           <Footer />
           <CookieConsent />
           <InteractiveEffects />
+          <BackToTop />
         </ClientProviders>
 
         {/* analytics scripts */}
