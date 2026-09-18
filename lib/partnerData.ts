@@ -1,11 +1,15 @@
-export type RegionKey = "USA" | "India" | "Caribbean" | "Thailand";
+export type RegionKey = "USA" | "India" | "Caribbean" | "Thailand" | "United Kingdom" | string;
 
 export interface Partner {
+  id?: string;
   name: string;
   website: string;
   logo: string;
   region: RegionKey;
+  country?: string;
+  value?: string;
   theme?: "dark" | "light";
+  display_order?: number;
 }
 
 export interface RegionInfo {
@@ -19,6 +23,7 @@ export const REGIONS: RegionInfo[] = [
   { key: "India", label: "India", flag: "🇮🇳" },
   { key: "Caribbean", label: "Caribbean", flag: "🌴" },
   { key: "Thailand", label: "Thailand", flag: "🇹🇭" },
+  { key: "United Kingdom", label: "United Kingdom", flag: "🇬🇧" },
 ];
 
 export const FALLBACK_PARTNERS: Record<RegionKey, Partner[]> = {
@@ -28,48 +33,64 @@ export const FALLBACK_PARTNERS: Record<RegionKey, Partner[]> = {
       website: "https://bytesols.com/",
       logo: "/images/partners/logos/bytesols.png",
       region: "USA",
+      country: "United States",
+      value: "USA",
     },
     {
       name: "MacroTech",
       website: "https://macrotechglobal.com/",
       logo: "/images/partners/logos/macrotech.svg",
       region: "USA",
+      country: "United States",
+      value: "USA",
     },
     {
       name: "CompFl",
       website: "https://compfl.com/",
       logo: "/images/partners/logos/compfl.png",
       region: "USA",
+      country: "United States",
+      value: "USA",
     },
     {
       name: "BlueZone",
       website: "https://www.bluezone-insurance.com/",
       logo: "/images/partners/logos/bluezone.png",
       region: "USA",
+      country: "United States",
+      value: "USA",
     },
     {
       name: "Caldwell-Digital",
       website: "https://www.caldwell-list.com/",
       logo: "/images/partners/logos/caldwell.webp",
       region: "USA",
+      country: "United States",
+      value: "USA",
     },
     {
       name: "Axcsys Communications",
       website: "https://axcsystelcom.com/",
       logo: "/images/partners/logos/axcsys.jpg",
       region: "USA",
+      country: "United States",
+      value: "USA",
     },
     {
       name: "VortalSoft",
       website: "https://vortalsoft.com/",
       logo: "/images/partners/logos/vortalsoft.png",
       region: "USA",
+      country: "United States",
+      value: "USA",
     },
     {
       name: "GB Tech",
       website: "https://www.gbtech.net/",
       logo: "/images/partners/logos/gbtech.png",
       region: "USA",
+      country: "United States",
+      value: "USA",
       theme: "dark",
     },
     {
@@ -77,23 +98,28 @@ export const FALLBACK_PARTNERS: Record<RegionKey, Partner[]> = {
       website: "https://channel-brokers.com/",
       logo: "/images/partners/logos/channel-brokers.png",
       region: "USA",
+      country: "United States",
+      value: "USA",
     },
     {
       name: "One Call Networks",
       website: "https://www.onecallnetworks.com/",
       logo: "/images/partners/logos/onecall.png",
       region: "USA",
+      country: "United States",
+      value: "USA",
     },
   ],
   India: [
-    { name: "UElement Technologies", website: "https://uelement.in/", logo: "/images/partners/logos/uelement.svg", region: "India", theme: "dark" },
-    { name: "Universys Technologies", website: "https://universys.in/", logo: "/images/partners/logos/universys.png", region: "India" },
-    { name: "LN InfoSec Pvt Ltd", website: "https://lninfosec.com/", logo: "/images/partners/logos/lninfosec.png", region: "India", theme: "dark" },
-    { name: "Tapasya Technovation", website: "https://tapasyatech.in/", logo: "/images/partners/logos/tapasya.png", region: "India" },
-    { name: "Forenx Technologies", website: "https://www.forenxtech.com/", logo: "/images/partners/logos/forenx.png", region: "India" },
-    { name: "Atomic IT Solutions", website: "https://atomicits.com/", logo: "/images/partners/logos/atomicits.png", region: "India" },
-    { name: "Axiatix", website: "https://axiatix.com/", logo: "/images/partners/logos/axiatix.png", region: "India" },
-    { name: "ARRA Associates", website: "https://arra-associates.com/", logo: "/images/partners/logos/arra-logo.png", region: "India" },
+    { name: "UElement Technologies", website: "https://uelement.in/", logo: "/images/partners/logos/uelement.svg", region: "India", country: "India", value: "India", theme: "dark" },
+    { name: "Samanviti Technologies", website: "https://samanviti.com/", logo: "/images/partners/logos/uelement.svg", region: "India", country: "India", value: "India" },
+    { name: "Universys Technologies", website: "https://universys.in/", logo: "/images/partners/logos/universys.png", region: "India", country: "India", value: "India" },
+    { name: "LN InfoSec Pvt Ltd", website: "https://lninfosec.com/", logo: "/images/partners/logos/lninfosec.png", region: "India", country: "India", value: "India", theme: "dark" },
+    { name: "Tapasya Technovation", website: "https://tapasyatech.in/", logo: "/images/partners/logos/tapasya.png", region: "India", country: "India", value: "India" },
+    { name: "Forenx Technologies", website: "https://www.forenxtech.com/", logo: "/images/partners/logos/forenx.png", region: "India", country: "India", value: "India" },
+    { name: "Atomic IT Solutions", website: "https://atomicits.com/", logo: "/images/partners/logos/atomicits.png", region: "India", country: "India", value: "India" },
+    { name: "Axiatix", website: "https://axiatix.com/", logo: "/images/partners/logos/axiatix.png", region: "India", country: "India", value: "India" },
+    { name: "ARRA Associates", website: "https://arra-associates.com/", logo: "/images/partners/logos/arra-logo.png", region: "India", country: "India", value: "India" },
   ],
   Caribbean: [
     {
@@ -101,12 +127,16 @@ export const FALLBACK_PARTNERS: Record<RegionKey, Partner[]> = {
       website: "https://altcatalyst.com/",
       logo: "/images/partners/logos/altcatalyst.png",
       region: "Caribbean",
+      country: "Trinidad and Tobago",
+      value: "Caribbean",
     },
     {
       name: "Antraco Aruba",
       website: "https://www.antracoaruba.com/",
       logo: "/images/partners/logos/antraco.jpg",
       region: "Caribbean",
+      country: "Aruba",
+      value: "Caribbean",
     },
   ],
   Thailand: [
@@ -115,7 +145,19 @@ export const FALLBACK_PARTNERS: Record<RegionKey, Partner[]> = {
       website: "https://www.peaksecure.ai/",
       logo: "/images/partners/logos/peaksecure.svg",
       region: "Thailand",
+      country: "Thailand",
+      value: "Thailand",
       theme: "dark",
+    },
+  ],
+  "United Kingdom": [
+    {
+      name: "CyberVault UK",
+      website: "https://channel-brokers.com/",
+      logo: "/images/partners/logos/channel-brokers.png",
+      region: "United Kingdom",
+      country: "United Kingdom",
+      value: "UK",
     },
   ],
 };
@@ -148,79 +190,19 @@ export function getInitials(name: string): string {
     .toUpperCase();
 }
 
-export async function getPartners(): Promise<Record<RegionKey, Partner[]>> {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 8000);
-
+/**
+ * Fetches active partners from Mainstay CMS with resilient fallback to local data.
+ */
+export async function getPartners(): Promise<Record<string, Partner[]>> {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-    const tenantSlug = process.env.NEXT_PUBLIC_TENANT_SLUG;
-
-    if (!tenantSlug) {
-      console.warn("Missing NEXT_PUBLIC_TENANT_SLUG in env");
-      return FALLBACK_PARTNERS;
+    const { fetchActivePartners } = await import("./mainstay");
+    const partners = await fetchActivePartners();
+    if (partners && Object.keys(partners).length > 0) {
+      return partners as Record<string, Partner[]>;
     }
-
-    const res = await fetch(`${apiUrl}/api/v1/partnerships/active`, {
-      headers: { "x-tenant-slug": tenantSlug },
-      next: { revalidate: 60 },
-      signal: controller.signal,
-    });
-    clearTimeout(timeout);
-
-    if (!res.ok) {
-      console.error("Failed to fetch partners:", res.statusText);
-      return FALLBACK_PARTNERS;
-    }
-
-    const json = await res.json();
-    const data = Array.isArray(json) ? json : json.data || [];
-
-    if (data.length === 0) {
-      return FALLBACK_PARTNERS;
-    }
-
-    const grouped: Record<RegionKey, Partner[]> = {
-      USA: [],
-      India: [],
-      Caribbean: [],
-      Thailand: [],
-    };
-
-    data.forEach((item: any) => {
-      const extra = item.extra_field || {};
-      // Fallback to USA if region is invalid
-      const VALID_REGIONS: RegionKey[] = [
-        "USA",
-        "India",
-        "Caribbean",
-        "Thailand",
-      ];
-
-      const rawRegion = extra.region;
-      const region: RegionKey = VALID_REGIONS.includes(rawRegion)
-        ? rawRegion
-        : "USA";
-
-      const partner: Partner = {
-        name: extra.name || "Partner",
-        website: item.website_url || "",
-        logo: item.logo || "",
-        region: region,
-        theme: extra.theme || "light",
-      };
-
-      if (grouped[region]) {
-        grouped[region].push(partner);
-      } else {
-        grouped.USA.push(partner);
-      }
-    });
-
-    return grouped;
   } catch (error) {
-    clearTimeout(timeout);
-    console.error("Error fetching partners:", error);
-    return FALLBACK_PARTNERS;
+    console.warn("Mainstay client fetch error, falling back to local partners:", error);
   }
+
+  return FALLBACK_PARTNERS;
 }

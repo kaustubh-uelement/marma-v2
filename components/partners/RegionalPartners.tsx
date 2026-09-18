@@ -11,7 +11,7 @@ import {
 import { PartnerLogo } from "./PartnerLogo";
 
 export default function RegionalPartners() {
-  const [partnersData, setPartnersData] = useState<Record<RegionKey, Partner[]>>(FALLBACK_PARTNERS);
+  const [partnersData, setPartnersData] = useState<Record<string, Partner[]>>(FALLBACK_PARTNERS);
 
   useEffect(() => {
     let isMounted = true;
@@ -29,6 +29,11 @@ export default function RegionalPartners() {
       isMounted = false;
     };
   }, []);
+
+  // Determine all regions present in data, ensuring preferred regional order
+  const preferredOrder = ["USA", "India", "Caribbean", "Thailand", "United Kingdom"];
+  const dynamicRegions = Object.keys(partnersData);
+  const allRegions = Array.from(new Set([...preferredOrder, ...dynamicRegions]));
 
   return (
     <section className="w-full bg-white flex flex-col items-center pt-16 lg:pt-24 pb-16 lg:pb-24 font-body overflow-hidden">
@@ -51,9 +56,9 @@ export default function RegionalPartners() {
 
       {/* Stacked Carousels */}
       <div className="w-full flex flex-col gap-10 md:gap-12 mt-12 md:mt-16">
-        {["USA", "India", "Caribbean", "Thailand"].map(
-          (regionKey, regionIndex) => {
-            const partners: Partner[] = partnersData[regionKey as RegionKey] || [];
+        {allRegions.map(
+          (regionKey) => {
+            const partners: Partner[] = partnersData[regionKey] || [];
             if (partners.length === 0) return null;
 
             const isStatic = partners.length <= 2;
@@ -132,11 +137,18 @@ export default function RegionalPartners() {
                           />
                         </div>
 
-                        {/* Name */}
+                        {/* Name & Country Distinction */}
                         <div className="flex flex-col min-w-0">
-                          <span className="text-sm md:text-base font-semibold text-[#323232] group-hover:text-[#FF0000] transition-colors duration-300 truncate">
-                            {partner.name}
-                          </span>
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <span className="text-sm md:text-base font-semibold text-[#323232] group-hover:text-[#FF0000] transition-colors duration-300 truncate">
+                              {partner.name}
+                            </span>
+                            {partner.country && (
+                              <span className="text-[10px] font-medium text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 flex-shrink-0">
+                                {partner.value || partner.country}
+                              </span>
+                            )}
+                          </div>
                           <span className="text-xs text-slate-400 truncate">
                             {partner.website
                               .replace(/^https?:\/\/(www\.)?/, "")
