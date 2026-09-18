@@ -7,18 +7,11 @@ export default function InteractiveEffects() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
     function runCount(n: HTMLElement) {
       const t = parseFloat(n.dataset.count || "0");
       const d = parseInt(n.dataset.dec || "0", 10);
       const pre = n.dataset.prefix || "";
       const suf = n.dataset.suffix || "";
-
-      if (reduce) {
-        n.textContent = pre + t.toFixed(d) + suf;
-        return;
-      }
 
       const dur = 1150;
       const t0 = performance.now();
@@ -57,7 +50,7 @@ export default function InteractiveEffects() {
     const pointerFine = window.matchMedia("(pointer:fine)").matches;
     const cleanups: (() => void)[] = [];
 
-    if (!reduce && pointerFine) {
+    if (pointerFine) {
       const cards = document.querySelectorAll<HTMLElement>(".glass-hover");
       cards.forEach((c) => {
         const handler = (e: PointerEvent) => {
