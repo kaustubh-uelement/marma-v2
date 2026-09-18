@@ -5,8 +5,10 @@ import PartnerBenefits from "@/components/partners/PartnerBenefits";
 import RegionalPartners from "@/components/partners/RegionalPartners";
 import DecorativeLine from "@/components/home/DecorativeLine";
 import PartnersHeroActions from "@/components/partners/PartnersHeroActions";
+import { getPartners } from "@/lib/partnerData";
 
-export default function PartnersPage() {
+export default async function PartnersPage() {
+  const initialPartners = await getPartners();
   return (
     <main className="w-full flex-grow flex flex-col items-center">
       <section
@@ -61,7 +63,7 @@ export default function PartnersPage() {
         />
       </div>
 
-      <RegionalPartners />
+      <RegionalPartners initialPartners={initialPartners} />
       <PartneringMadeEasy />
       <PartnerBenefits />
 

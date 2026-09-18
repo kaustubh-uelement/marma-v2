@@ -10,11 +10,24 @@ import {
 } from "@/lib/partnerData";
 import { PartnerLogo } from "./PartnerLogo";
 
-export default function RegionalPartners() {
-  const [partnersData, setPartnersData] = useState<Record<string, Partner[]>>(FALLBACK_PARTNERS);
+export default function RegionalPartners({
+  initialPartners,
+}: {
+  initialPartners?: Record<string, Partner[]>;
+}) {
+  const [partnersData, setPartnersData] = useState<Record<string, Partner[]>>(
+    initialPartners && Object.keys(initialPartners).length > 0
+      ? initialPartners
+      : FALLBACK_PARTNERS
+  );
 
   useEffect(() => {
     let isMounted = true;
+    // If server already provided populated partners, no initial client fetch is required
+    if (initialPartners && Object.keys(initialPartners).length > 0) {
+      return;
+    }
+
     getPartners()
       .then((data) => {
         if (isMounted && data) {
@@ -28,7 +41,7 @@ export default function RegionalPartners() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [initialPartners]);
 
   // Determine all regions present in data, ensuring preferred regional order
   const preferredOrder = ["USA", "India", "Caribbean", "Thailand", "United Kingdom"];
