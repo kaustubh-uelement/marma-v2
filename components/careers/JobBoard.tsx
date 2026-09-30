@@ -97,7 +97,7 @@ export default function JobBoard({ jobs }: JobBoardProps) {
                   )}
                 </div>
 
-                <div className="p-6 rounded-2xl bg-[rgba(255,255,255,0.6)] border border-[var(--line-soft)]">
+                <div className="p-4 sm:p-6 rounded-2xl bg-[rgba(255,255,255,0.6)] border border-[var(--line-soft)]">
                   <div className="eyebrow mb-2">Apply for this role</div>
                   <h4 style={{ margin: "0 0 16px", fontSize: "1.1rem" }}>
                     Application Form: {job.title}

@@ -342,12 +342,12 @@ function SpecificationTable({ product }: { product: any }) {
                   <tr key={`${item.label}-${item.value}`}>
                     <th
                       scope="row"
-                      className={`text-xs md:text-sm font-bold px-3 py-2 text-left align-middle md:px-5 md:py-3 text-nowrap ${rowBorderClass} border-r border-dashed border-[#D7D7D7]`}
+                      className={`text-xs md:text-sm font-bold px-3 py-2 text-left align-middle md:px-5 md:py-3 ${rowBorderClass} border-r border-dashed border-[#D7D7D7]`}
                     >
                       {item.label}
                     </th>
                     <td
-                      className={`text-xs md:text-sm font-medium px-3 py-2 align-middle md:px-5 md:py-3 text-nowrap ${rowBorderClass}`}
+                      className={`text-xs md:text-sm font-medium px-3 py-2 align-middle md:px-5 md:py-3 ${rowBorderClass}`}
                     >
                       {item.value}
                     </td>

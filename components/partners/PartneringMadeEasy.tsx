@@ -47,7 +47,7 @@ export default function PartneringMadeEasy() {
       {/* Main Content Container (Style matching SolutionsInfo) */}
       <div className="w-full max-w-[1440px] bg-[#e8e8e8] mx-auto px-6 lg:px-16 flex flex-col py-8 lg:py-16 relative z-10 items-center rounded-sm">
         {/* Main Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 w-[70%] relative">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 w-full md:w-[85%] lg:w-[70%] relative">
           {PARTNER_CARDS.map((card, index) => (
             <div key={index} className={CARD_CLASSES}>
               {/* Top Accent Line */}

@@ -123,7 +123,7 @@ export default function ContactForm({
   };
 
   return (
-    <div className="bg-white rounded-[12px] border border-[#E5E5E5] shadow-sm p-6 md:p-8 lg:p-10 flex flex-col h-full">
+    <div className="bg-white rounded-[12px] border border-[#E5E5E5] shadow-sm p-4 sm:p-6 md:p-8 lg:p-10 flex flex-col h-full">
       <form onSubmit={handleSubmit} className="flex flex-col gap-6" noValidate>
         {submitStatus && (
           <div

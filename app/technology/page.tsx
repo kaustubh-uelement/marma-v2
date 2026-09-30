@@ -125,7 +125,7 @@ export default function TechnologyPage() {
       <section className="sec">
         <div className="wrap">
           <div className="split">
-            <div className="card glass glass-hi glass-hover rv" style={{ padding: "36px 32px" }}>
+            <div className="card glass glass-hi glass-hover rv">
               <div className="eyebrow">Architecture</div>
               <h2 style={{ margin: "20px 0 20px" }}>
                 A SASE platform that doesn&apos;t route your traffic through someone else.

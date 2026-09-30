@@ -43,7 +43,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         </button>
 
         <div className="bg-white">
-          <div className="p-8 pb-0">
+          <div className="p-5 sm:p-8 pb-0">
             <h3 className="fl-banner-title text-text-dark font-semibold! text-center">
               Let&apos;s talk about your business.
             </h3>

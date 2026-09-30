@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useCart } from "@/context/CartContext";
 
 export default function BackToTop() {
   const [visible, setVisible] = useState(false);
+  const { totalItems } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -27,12 +29,14 @@ export default function BackToTop() {
     });
   };
 
+  const bottomPos = totalItems > 0 ? "bottom-20 sm:bottom-24" : "bottom-5 sm:bottom-7";
+
   return (
     <button
       type="button"
       onClick={scrollToTop}
       aria-label="Back to top"
-      className={`fixed bottom-5 right-5 sm:bottom-7 sm:right-7 z-40 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 ${
+      className={`fixed ${bottomPos} right-5 sm:right-7 z-40 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 ${
         visible
           ? "opacity-100 translate-y-0 pointer-events-auto scale-100"
           : "opacity-0 translate-y-2 pointer-events-none scale-75"

@@ -360,31 +360,43 @@ export default function Navbar() {
             );
           })}
 
-          <Link href="/store" onClick={() => setIsMobileMenuOpen(false)}>
-            Store
-          </Link>
-          <Link href="/contact-us" onClick={() => setIsMobileMenuOpen(false)}>
-            Contact Us
-          </Link>
-          <Link href="/support" onClick={() => setIsMobileMenuOpen(false)}>
-            Support
-          </Link>
-
-          {isAuthenticated ? (
-            <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)}>
-              My Profile
+          <div className="pt-2 flex flex-col">
+            <Link href="/store" onClick={() => setIsMobileMenuOpen(false)}>
+              Store
             </Link>
-          ) : (
-            <button
-              onClick={() => {
-                setIsMobileMenuOpen(false);
-                openAuthModal();
-              }}
-              className="text-left w-full border-0 bg-transparent p-0 cursor-pointer text-[var(--red)] font-medium pt-3"
+            <Link href="/contact-us" onClick={() => setIsMobileMenuOpen(false)}>
+              Contact Us
+            </Link>
+            <Link href="/support" onClick={() => setIsMobileMenuOpen(false)}>
+              Support
+            </Link>
+
+            {isAuthenticated ? (
+              <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)}>
+                My Profile
+              </Link>
+            ) : (
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  openAuthModal();
+                }}
+                className="text-left w-full border-0 bg-transparent py-2.5 cursor-pointer text-[var(--red)] font-medium"
+              >
+                Sign In / Account
+              </button>
+            )}
+          </div>
+
+          <div className="pt-3 border-t border-[var(--line-soft)] mt-2">
+            <Link
+              href="/contact-us"
+              className="btn btn-red w-full justify-center text-[0.72rem]"
+              onClick={() => setIsMobileMenuOpen(false)}
             >
-              Sign In / Account
-            </button>
-          )}
+              Start 30-Day Trial &rarr;
+            </Link>
+          </div>
         </div>
       </div>
     </header>

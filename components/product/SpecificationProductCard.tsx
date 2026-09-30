@@ -30,7 +30,7 @@ export default function SpecificationProductCard({
     <section className="w-full bg-white px-4 pb-6 sm:px-6 sm:pb-8 lg:px-10 lg:pb-10 xl:px-12 xl:pb-12">
       <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-10 xl:gap-14">
         <div className="w-full max-w-[560px]">
-          <h2 className="fl3-3 text-nowrap">
+          <h2 className="fl3-3">
             {title}
           </h2>
           <p className="fl4-3 font-light mt-1 max-w-full md:mt-6">
@@ -73,12 +73,12 @@ export default function SpecificationProductCard({
                       <tr key={`${item.label}-${item.value}`}>
                         <th
                           scope="row"
-                          className={`fl5 font-bold px-3 py-1 text-left align-middle md:px-5 md:py-2 text-nowrap ${rowBorderClass} border-r border-dashed border-[#D7D7D7]`}
+                          className={`fl5 font-bold px-3 py-1.5 text-left align-middle md:px-5 md:py-2 ${rowBorderClass} border-r border-dashed border-[#D7D7D7]`}
                         >
                           {item.label}
                         </th>
                         <td
-                          className={`fl5 font-medium px-3 py-1 align-middle md:px-5 md:py-3 text-nowrap ${rowBorderClass}`}
+                          className={`fl5 font-medium px-3 py-1.5 align-middle md:px-5 md:py-3 ${rowBorderClass}`}
                         >
                           {item.value}
                         </td>

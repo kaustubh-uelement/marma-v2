@@ -22,7 +22,7 @@ export default function DecorativeLine({
   viewBox,
   points,
   dots,
-  strokeColor = "#FF0000",
+  strokeColor = "#D81E2C",
   strokeWidth = 1.5,
   dotRadius = 12,
   animationDuration = 2.5,
