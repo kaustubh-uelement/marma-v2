@@ -1,5 +1,6 @@
 import Link from "next/link";
-import LiveActivitySignal from "@/components/home/LiveActivitySignal";
+import SaaSHero from "@/components/home/SaaSHero";
+import TrustedByStrip from "@/components/home/TrustedByStrip";
 import PlatformWheel from "@/components/home/PlatformWheel";
 import ModuleTabs from "@/components/home/ModuleTabs";
 import MetricBand from "@/components/common/MetricBand";
@@ -65,38 +66,11 @@ export default function HomePage() {
 
   return (
     <>
-      {/* Hero */}
-      <section className="hero">
-        <div className="wrap hero-in">
-          <div>
-            <div className="eyebrow">
-              Marma | the vital points
-            </div>
-            <h1>
-              Every network has vital points. We defend <em>all of them</em>.
-            </h1>
-            <p className="lede">
-              One AI security platform covering endpoints, email, cloud data and the network edge,
-              with a single console and a single policy engine. It installs in under five
-              minutes and runs without a security team.
-            </p>
-            <div className="phero-cta">
-              <Link className="btn btn-red" href="/contact-us">
-                Start 30-day trial &rarr;
-              </Link>
-              <Link className="btn btn-glass" href="/technology">
-                See the platform
-              </Link>
-            </div>
-            <div className="hero-fine">
-              <span>No credit card</span>
-              <span>Cancel anytime</span>
-              <span>Under 5 min to deploy</span>
-            </div>
-          </div>
-          <LiveActivitySignal />
-        </div>
-      </section>
+      {/* Hero Section */}
+      <SaaSHero />
+
+      {/* Trusted By Strip */}
+      <TrustedByStrip />
 
       {/* The Platform */}
       <section className="sec">
